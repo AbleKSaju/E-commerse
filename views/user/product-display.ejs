@@ -1,0 +1,367 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Stepz</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link href="assets/css/main.css" rel="stylesheet" type="text/css" />
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+ <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700" rel="stylesheet">
+ <link href="https://fonts.googleapis.com/css?family=Rokkitt:100,300,400,700" rel="stylesheet">
+ 
+ <!-- Animate.css -->
+ <link rel="stylesheet" href="css/animate.css">
+ <!-- Icomoon Icon Fonts-->
+ <link rel="stylesheet" href="css/icomoon.css">
+ <!-- Ion Icon Fonts-->
+ <link rel="stylesheet" href="css/ionicons.min.css">
+ <!-- Bootstrap  -->
+ <link rel="stylesheet" href="css/bootstrap.min.css">
+
+ <!-- Magnific Popup -->
+ <link rel="stylesheet" href="css/magnific-popup.css">
+
+ <!-- Flexslider  -->
+ <link rel="stylesheet" href="css/flexslider.css">
+
+ <!-- Owl Carousel -->
+ <link rel="stylesheet" href="css/owl.carousel.min.css">
+ <link rel="stylesheet" href="css/owl.theme.default.min.css">
+ 
+ <!-- Date Picker -->
+ <link rel="stylesheet" href="css/bootstrap-datepicker.css">
+ <!-- Flaticons  -->
+ <link rel="stylesheet" href="fonts/flaticon/font/flaticon.css">
+
+ <!-- Theme style  -->
+ <link rel="stylesheet" href="css/style.css">
+	<head>
+	<title>Footwear - Free Bootstrap 4 Template by Colorlib</title>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Rokkitt:100,300,400,700" rel="stylesheet">
+	
+	<!-- Animate.css -->
+	<link rel="stylesheet" href="css/animate.css">
+	<!-- Icomoon Icon Fonts-->
+	<link rel="stylesheet" href="css/icomoon.css">
+	<!-- Ion Icon Fonts-->
+	<link rel="stylesheet" href="css/ionicons.min.css">
+	<!-- Bootstrap  -->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+
+	<!-- Magnific Popup -->
+	<link rel="stylesheet" href="css/magnific-popup.css">
+
+	<!-- Flexslider  -->
+	<link rel="stylesheet" href="css/flexslider.css">
+
+	<!-- Owl Carousel -->
+	<link rel="stylesheet" href="css/owl.carousel.min.css">
+	<link rel="stylesheet" href="css/owl.theme.default.min.css">
+	
+	<!-- Date Picker -->
+	<link rel="stylesheet" href="css/bootstrap-datepicker.css">
+	<!-- Flaticons  -->
+	<link rel="stylesheet" href="fonts/flaticon/font/flaticon.css">
+
+	<!-- Theme style  -->
+	<link rel="stylesheet" href="css/style.css">
+
+	</head>
+
+    <body>
+        <!-- <div class="screen-overlay"></div> -->
+    <!--     
+        <main class="main-wrap"> -->
+            <div id="page">
+                <nav class="colorlib-nav" role="navigation">
+                    <%-include('../../partials/user-header')%>
+            </nav>
+                <style>
+                  #img-zoomer-box {
+                          max-width: 500px !important;
+                          height: auto !important;
+                          position: relative !important;
+                          margin: 10px auto !important;
+                      }
+              
+                      selectedImage {
+                          width: 100% !important;
+                          height: auto !important;
+                      }
+              
+                      #img-zoomer-box:hover,
+                      #img-zoomer-box:active {
+                          cursor: zoom-in !important;
+                          display: block !important;
+                      }
+              
+                      #img-zoomer-box:hover #img-2,
+                      #img-zoomer-box:active #img-2 {
+                          opacity: 1 !important;
+                      }
+              
+                      #img-2 {
+                          width: 350px !important;
+                          height: 350px !important;
+                          margin-top: -120px;
+                          margin-left: -150px;
+                          background: url('/uploads/products/<%=data[0].image[0]%>') no-repeat #FFF;
+                          box-shadow: 0 5px 10px -2px rgba(0, 0, 0, 0.3);
+                          pointer-events: none !important;
+                          position: absolute !important;
+                          opacity: 0;
+                          border: 4px solid whitesmoke;
+                          z-index: 99;
+                          
+                          
+                          border-radius: 100%;
+                          display: block;
+                          transition: opacity .2s;
+                      }
+                </style>
+              </head>
+              <!-- content -->
+              <section class="py-5">
+                <div class="container">
+                  <div class="row gx-5">
+                   
+              
+              
+                    <aside class="col-lg-6">
+                      <div class="border rounded-4 mb-3 d-flex justify-content-center">
+                              <div id="img-zoomer-box">
+                                  <img id="selectedImage" style="max-width: 100%; max-height: 100vh; margin: auto;"
+                                      class="rounded-4 fit" src="/uploads/products/<%=data[0].image[0]%>" />
+                                  <div id="img-2"></div>
+                              </div>
+                      </div>
+                      <div class="d-flex justify-content-center mb-3">
+                        <% for (let i = data[0].image.length - 1; i >= 0; i--) { %>
+                              <a data-fslightbox="mygallery" class="border mx-1 rounded-2" data-type="image" href="#"
+                                  onclick="changeImage('<%= data[0].image[i] %>')" class="item-thumb">
+                                  <img width="60" height="60" class="rounded-2" src="/uploads/products/<%= data[0].image[i] %>" />
+                              </a>
+                              <% } %>
+                      </div>
+
+                    
+                      <!-- thumbs-wrap.// -->
+                      <!-- gallery-wrap .end// -->
+                  </aside>
+              
+              
+                    <main class="col-lg-6">
+                      <div class="ps-lg-3">
+                        <h3 class="title text-dark"><%= data[0].name %>
+                         
+                        </h3>
+                        <p>
+                            <%= data[0].description %>
+                           
+                          </p>
+                       
+              
+                        <div class="mt-5 mb-3">
+                            <div> <span class="product_price">₹ <%=data[0].saleprice%></span> <strike class="product_discount"> <span style='color:black'>₹ <%=data[0].regularprice%><span> </strike> </div>
+                                <div> <span class="product_saved">You Saved:</span> <span style='color:black'>₹ <%=data[0].saleprice-data[0].regularprice%><span> </div>
+                          
+                        </div>
+              
+                        
+              
+                        
+              
+                        <hr />
+              
+                       <%if(data[0].units<10){%>
+                        <p class="text-danger" id="unit">only <%=data[0].units%> stocks left </p>
+                        <%}%>
+              
+                        <div class="row mb-4">
+                         
+                          <!-- col.// -->
+                            <div class="col-md-4 col-6 mb-3">
+                              <label class="mb-2 d-block">Quantity</label>
+                              <div class="input-group mb-3" style="width: 170px;">
+                              <button class="btn btn-white border border-secondary px-3" type="button" id="decrementButton" data-mdb-ripple-color="dark">
+                               -
+                              </button>
+                              <input name="quantity" type="text" id="quantityInput" class="form-control text-center border border-secondary" value="1" aria-label="Example text with button addon" aria-describedby="decrementButton" />
+                              <button class="btn btn-white border border-secondary px-3" type="button" onclick="checkStock('<%=data[0].units%>')" id="incrementButton" data-mdb-ripple-color="dark">
+                                +
+                              </button>
+                              </div>
+                          </div>
+                          </div>
+                        </div>
+                        <a onclick="buyNow()" style="background-color: #ff3368; color: #ffff;" class="btn  shadow-0"> Buy now </a>
+                        <button type="button" id="popupButton" class="btn btn-warning shop-button" onclick="addtoCart('<%=data[0]._id%>')"  >Add to Cart</button>
+                        <a href="#" class="btn btn-light border border-secondary py-2 icon-hover px-3"> <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
+                      </div>
+                    
+                    </main>
+                  </div>
+                </div>
+              </section>
+              <!-- content -->
+              
+              <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+                  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+              
+              <script>
+                function changeImage(newImageSrc) {
+                  document.getElementById('img-2').style.backgroundImage = "url("+'/uploads/products/' + newImageSrc + ")";
+                  const selectedImage = document.getElementById('selectedImage');
+                  const selectedImageLink = document.getElementById('selectedImageLink');
+                  
+                  selectedImage.setAttribute('src', "/uploads/products/" + newImageSrc);
+                  selectedImageLink.setAttribute('href', "/uploads/products/" + newImageSrc);
+                }
+              
+                const decrementButton = document.getElementById("decrementButton");
+                const incrementButton = document.getElementById("incrementButton");
+                const quantityInput = document.getElementById("quantityInput");
+              
+                decrementButton.addEventListener("click", () => {
+                  let currentQuantity = parseInt(quantityInput.value);
+                  if (!isNaN(currentQuantity)) {
+                    currentQuantity = Math.max(currentQuantity - 1, 1);
+                    quantityInput.value = currentQuantity;
+                  }
+                });
+              
+                incrementButton.addEventListener("click", () => {
+                  let currentQuantity = parseInt(quantityInput.value);
+                  if (!isNaN(currentQuantity)) {
+                    currentQuantity++;
+                    quantityInput.value = currentQuantity;
+                  }
+                });
+              
+                function checkStock(unit){
+                      let quantity = document.getElementById('quantityInput').value;
+                      quantity = parseInt(quantity)
+                      unit = parseInt(unit)
+                      if(quantity+1>unit){
+                          Swal.fire({
+                                  title: 'STOCK!',
+                                  text: 'Product is out of stock.',
+                                  icon: 'error',
+                                  timer: 5000
+                              })
+                          document.getElementById('quantityInput').value = quantity-1;
+                      }
+                  }
+              
+              
+                 function addtoCart(proId){
+                              var quantity=document.getElementById("quantityInput").value
+                              var size=document.getElementById("selectedSizeInput").value
+                              $.ajax({
+                                   url:`/cart?id=${proId}`,
+                                   method:'post',
+                                   data:{
+                                      quantity:quantity,
+                                      size:size
+                                   },
+                                   success:(response)=>{
+                                      if (response.status === true) {
+                                          Swal.fire({
+                                            title: 'Added to Cart!',
+                                            text:'Continue Shopping',
+                                            icon: 'success',
+                                            timer: 3000, 
+                                            showConfirmButton: false 
+                                          })
+                                      }else{
+                                          alert("Error ocured")
+                                      }
+                                   }
+                              })
+                          }
+              
+                let zoomer = function () {
+                      document.querySelector('#img-zoomer-box')
+                          .addEventListener('mousemove', function (e) {
+                              let original = document.querySelector('#selectedImage'),
+                                  magnified = document.querySelector('#img-2'),
+                                  style = magnified.style,
+                                  x = e.pageX - this.offsetLeft,
+                                  y = e.pageY - this.offsetTop,
+                                  imgWidth = original.offsetWidth,
+                                  imgHeight = original.offsetHeight,
+                                  xperc = ((x / imgWidth) * 100),
+                                  yperc = ((y / imgHeight) * 100);
+              
+              
+                              if (x > (.01 * imgWidth)) {
+                                  xperc += (.15 * xperc);
+                              };
+              
+                              if (y >= (.01 * imgHeight)) {
+                                  yperc += (.15 * yperc);
+                              };
+              
+                              style.backgroundPositionX = (xperc - 9) + '%';
+                              style.backgroundPositionY = (yperc - 9) + '%';
+              
+                              style.left = (x - 180) + 'px';
+                              style.top = (y - 180) + 'px';
+              
+                          }, false);
+                  }();
+              </script>
+
+
+
+
+
+</script>
+	<!-- jQuery -->
+	<script src="js/jquery.min.js"></script>
+   <!-- popper -->
+   <script src="js/popper.min.js"></script>
+   <!-- bootstrap 4.1 -->
+   <script src="js/bootstrap.min.js"></script>
+   <!-- jQuery easing -->
+   <script src="js/jquery.easing.1.3.js"></script>
+	<!-- Waypoints -->
+	<script src="js/jquery.waypoints.min.js"></script>
+	<!-- Flexslider -->
+	<script src="js/jquery.flexslider-min.js"></script>
+	<!-- Owl carousel -->
+	<script src="js/owl.carousel.min.js"></script>
+	<!-- Magnific Popup -->
+	<script src="js/jquery.magnific-popup.min.js"></script>
+	<script src="js/magnific-popup-options.js"></script>
+	<!-- Date Picker -->
+	<script src="js/bootstrap-datepicker.js"></script>
+	<!-- Stellar Parallax -->
+	<script src="js/jquery.stellar.min.js"></script>
+	<!-- Main -->
+	<script src="js/main.js"></script>
+    
+	</body>
+</html>
+

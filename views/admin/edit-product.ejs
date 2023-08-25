@@ -1,0 +1,319 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-form-product-1.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:31 GMT -->
+<head>
+    <meta charset="utf-8">
+    <title>Stepz Dashboard</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/assets/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link href="/assets/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div class="screen-overlay"></div>
+   <%-include('../../partials/admin-header')%>
+    <main class="main-wrap">
+        
+        <form class="content-main" method="post" action="/admin/edit-products" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-9">
+                    <div class="content-header">
+                        <h2 class="content-title">Edit Product</h2>
+                        <!-- <div>
+                            <button type="submit" class="btn btn-md rounded font-sm hover-up">Publish</button>
+                        </div> -->
+                    </div>
+                </div>
+                <!-- <div class="col-lg-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Basic</h4>
+                        </div>
+                        <div class="card-body">
+
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Product title</label>
+                                    <input type="text" name="name" value="<%=data.name%>" maxlength="20" oninput="this.value = this.value.replace(/\s+/g, '')"  placeholder="Type here" required="true" class="form-control" id="product_name">
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Full description</label>
+                                    <textarea placeholder="Type here" name="description" required="true" class="form-control" rows="4"><%= data.description %></textarea>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <div class="mb-4">
+                                            <label class="form-label">Regular price</label>
+                                            <input placeholder="$" required="true" value="<%=data.regularprice%>" name="regularprice" type="text" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="mb-4">
+                                            <label class="form-label">Sale price</label>
+                                            <input placeholder="$" required="true" value="<%=data.saleprice%>" name="saleprice" type="text" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <label class="form-label">Units</label>
+                                        <input type="text" name="units" value="<%=data.units%>" required="true" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Tax rate</label>
+                                    <input type="text" name="taxrate" value="<%=data.taxrate%>" required="true" placeholder="%" class="form-control" id="product_name">
+                                </div>
+                                <style>
+                                    label {
+                                      display: block;
+                                      float: left;
+                                      margin-right: 10px;
+                                    }
+                                
+                                    .form-container {
+                                      display: inline-block;
+                                      vertical-align: top;
+                                      width: 45%; /* Adjust as needed */
+                                    }
+                                
+                                    .form-container h5 {
+                                      margin-top: 0;
+                                    }
+                                  </style>
+                                
+                                  <div class="form-container">
+                                    <h5>Select Available Sizes</h5>
+                                    <a id="sizeSelectionForm">
+                                      <div>
+                                        <% for (let size = 6; size <= 13; size += 0.5) { %>
+                                          <label>
+                                            <input type="checkbox" name="size" value="<%= size %>">
+                                            <%= size %>
+                                          </label>
+                                        <% } %>
+                                      </div>
+                                    </a>
+                                  </div>
+                                    <script>
+                                    const sizeSelectionForm = document.getElementById('sizeSelectionForm');
+                                    const selectedSizesDiv = document.getElementById('selectedSizes');
+                                    const selectedSizesList = document.getElementById('selectedSizesList');
+                                  </script>  
+                                  
+                                  
+
+
+                                <div class="mb-4">
+                                    <input type="hidden" name="id" value="<%=data._id%>" required="true">
+                                    <%for(i=0;i<data.image.length;i++){%>
+                                        <input type="hidden" name="img" value="<%=data.image[i]%>" required="true">
+                                        <%}%>
+                                </div>
+
+                        </div>
+                    </div> <!-- card end//
+                </div> -->
+
+                <div class="col-lg-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Basic</h4>
+                        </div>
+                        <div class="card-body">
+                            
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Product title</label>
+                                    <input type="text" value="<%=data.name%>" id="name" maxlength="50" name="name" required="true" placeholder="Type here" class="form-control" id="product_name">
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Full description</label>
+                                    <textarea placeholder="Type here"  id="description" maxlength="150" required="true" name="description" class="form-control" rows="4"><%=data.description%></textarea>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <div class="mb-4">
+                                            <label class="form-label">Regular price</label>
+                                            <div class="row gx-2">
+                                                <input placeholder="$" id="Rprice" value="<%=data.regularprice%>" required="true" name="Rprice" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="mb-4">
+                                            <label class="form-label">Promotional price</label>
+                                            <input placeholder="$" required="true" id="Pprice" value="<%=data.saleprice%>" name="Pprice" type="text" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="mb-4">
+                                            <label class="form-label">Unit</label>
+                                            <input placeholder="0" id="unit" required="true" value="<%=data.units%>" name="unit" type="text" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <input type="hidden" name="id" value="<%=data._id%>" required="true">
+                                    <%for(i=0;i<data.image.length;i++){%>
+                                        <input type="hidden" name="img" value="<%=data.image[i]%>" required="true">
+                                        <%}%>
+                                </div>
+                                <p id="err-msg"></p>
+                               
+                                <div class="d-flex justify-content-end">
+                            
+                                    <button type="submit" onclick="validate()" class="btn btn-md rounded font-sm col-lg-4 hover-up">Add product</button>
+                                </div>
+                                
+                            
+                        </div>
+                        
+                    </div> <!-- card end// -->
+                   <!-- card end// -->
+                </div>
+                <div class="col-lg-3">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Media</h4>
+                        </div>
+                        <div class="card-body">
+                            <p>Images</p>
+                            <%for(i=0;i<data.image.length;i++){%>
+                                <img src="/uploads/products/<%=data.image[i]%>" alt="Something fishyy.." width="80" height="80" accept="image/*"
+   onchange="validateImageFile(this)">
+                                <%}%>
+                           
+                        </div>
+                        
+                        <div class="card-body">
+                            <small style="font-weight: bold;">Upload 4 images</small>
+                            <div class="input-upload">
+                                <br>
+                                <input class="form-control" name="image" type="file" multiple >
+                            </div>
+                        </div>
+                    </div> <!-- card end// -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Organization</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gx-2">
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label">Category</label>
+                                    <select name="category" class="form-select">
+                                        <option><%=data.category%></option>
+                                        <%for(i=0;i<cat.length;i++){%>
+                                            <option> <%=cat[i].name%> </option>
+                                        <%}%>
+                                    </select>
+                                </div>
+                            </div> <!-- row.// -->
+                        </div>
+                    </div> <!-- card end// -->
+                </div>
+            </div>
+        </form> <!-- content-main end// -->
+    
+    </main>
+    <script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/vendors/select2.min.js"></script>
+    <script src="/assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="/assets/js/main.js" type="text/javascript"></script>
+</body>
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-form-product-1.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:32 GMT -->
+</html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Evara Dashboard</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/assets/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link href="/assets/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+<script>
+    function validate(){
+        document.getElementById('err-msg').innerHTML = ''
+        let name = document.getElementById('name').value;
+        const nameRegex = /^[A-Za-z0-9]{1,50}$/;
+
+        if(nameRegex.test(name)){
+        }else{  
+          document.getElementById('name').style.borderColor = 'red'
+          document.getElementById('name').style.borderWidth = '1px'
+          document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Name error'
+          //alert("Name Eroor 1:Start with capital letter 2:No white spaces 3:No Special symbols")
+          event.preventDefault()
+        }
+        
+        const RpriceRegex =/^[1-9][0-9]*$/
+
+
+        let Rprice = document.getElementById('Rprice').value;
+        if(RpriceRegex.test(Rprice)){}else{
+          document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Regular Price error'
+          document.getElementById('Rprice').style.borderColor = 'red'
+          document.getElementById('Rprice').style.borderWidth = '1px'
+          //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
+          event.preventDefault()
+        }
+
+        const PpriceRegex = /^[1-9][0-9]*$/
+
+
+        let Pprice = document.getElementById('Pprice').value;
+        if(RpriceRegex.test(Pprice)){}else{
+        document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Promotional Price error'
+        document.getElementById('Pprice').style.borderColor = 'red'
+        document.getElementById('Pprice').style.borderWidth = '1px'
+        //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
+        event.preventDefault()
+        }
+
+        const unitRegex = /^\d+$/;
+
+        let unit = document.getElementById('unit').value;
+        if(unitRegex.test(unit)){}else{
+        document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> unit  error'
+        document.getElementById('unit').style.borderColor = 'red'
+        document.getElementById('unit').style.borderWidth = '1px'
+        //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
+        event.preventDefault()
+        }
+
+        const descRegex = /^(?!\s*$).+/; 
+
+
+        let description = document.getElementById('description').value;
+        if(descRegex.test(description)){}else{
+        document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Description  error'
+        document.getElementById('description').style.borderColor = 'red'
+        document.getElementById('description').style.borderWidth = '1px'
+        //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
+        event.preventDefault()
+        }
+  
+        
+    }
+  </script>

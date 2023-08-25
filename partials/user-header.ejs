@@ -1,0 +1,156 @@
+<!DOCTYPE HTML>
+<html>
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-products-grid-2.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:21 GMT -->
+<head>
+    <meta charset="utf-8">
+    <title>Stepz</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/assets/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link href="/assets/css/main.css" rel="stylesheet" type="text/css" />
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+ <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700" rel="stylesheet">
+ <link href="https://fonts.googleapis.com/css?family=Rokkitt:100,300,400,700" rel="stylesheet">
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ 
+ <!-- Animate.css -->
+ <link rel="stylesheet" href="css/animate.css">
+ <!-- Icomoon Icon Fonts-->
+ <link rel="stylesheet" href="css/icomoon.css">
+ <!-- Ion Icon Fonts-->
+ <link rel="stylesheet" href="css/ionicons.min.css">
+ <!-- Bootstrap  -->
+ <link rel="stylesheet" href="css/bootstrap.min.css">
+
+ <!-- Magnific Popup -->
+ <link rel="stylesheet" href="css/magnific-popup.css">
+
+ <!-- Flexslider  -->
+ <link rel="stylesheet" href="css/flexslider.css">
+
+ <!-- Owl Carousel -->
+ <link rel="stylesheet" href="css/owl.carousel.min.css">
+ <link rel="stylesheet" href="css/owl.theme.default.min.css">
+ 
+ <!-- Date Picker -->
+ <link rel="stylesheet" href="css/bootstrap-datepicker.css">
+ <!-- Flaticons  -->
+ <link rel="stylesheet" href="fonts/flaticon/font/flaticon.css">
+
+ <!-- Theme style  -->
+<div class="top-menu">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-7 col-md-9">
+                <!-- <div id="colorlib-logo"><a href="index.html">Footwear</a></div> -->
+                <a href="index.html" class="brand-wrap">
+                    <img src="/assets/imgs/theme/stepz.png" class="logo" alt="Stepz Dashboard">
+                </a>
+            </div>
+            <div class="col-sm-5 col-md-3">
+            <form action="#" class="search-wrap">
+               <div class="form-group">
+                  <input type="search" class="form-control search" placeholder="Search">
+                  <button class="btn btn-primary submit-search text-center" type="submit"><i class="icon-search"></i></button>
+               </div>
+            </form>
+         </div>  
+     </div>
+        <div class="row">
+            <div class="col-sm-12 text-left menu-1">
+                <ul>
+                    <li><a href="index.html" style="text-decoration: none;">Home</a></li>
+                    <li class="has-dropdown">
+                        <a href="men.html"style="text-decoration: none;">Men</a>
+                        <ul class="dropdown">
+                            <li><a href="product-detail.html"style="text-decoration: none;">Product Detail</a></li>
+                            <li><a href="cart.html"style="text-decoration: none;">Shopping Cart</a></li>
+                            <li><a href="checkout.html"style="text-decoration: none;">Checkout</a></li>
+                            <li><a href="order-complete.html"style="text-decoration: none;">Order Complete</a></li>
+                            <li><a href="add-to-wishlist.html"style="text-decoration: none;">Wishlist</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="women.html"style="text-decoration: none;">Women</a></li>
+                    <li><a href="/show-products"style="text-decoration: none;">Products</a></li>
+                   
+                    
+                    <li><a href="/account"style="text-decoration: none;">Account</a></li>
+                    <%if(!isLoggedIn){%>
+                    <li><a href="/login"style="text-decoration: none;">Login</a></li>
+                    <%}%>
+                        <!-- <li>
+                            <a class="" href="/logout" style="text-decoration: none;"role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Login
+                              </a>									
+                              <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                <% if (isLoggedIn) { %>
+                                <a class="dropdown-item" href="/login">Login</a>
+                                <% } %>
+                              </div>
+                          </li>
+          -->
+                    <li class="cart"> <a href="/cart">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="26" fill="currentColor" class="bi bi-cart ml-2" viewBox="0 0 16 16">
+                            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                            </svg>
+                    </a>
+                </li>
+                    <li class="cart">
+                        <a href="www.google.com">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="26" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
+                                <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+                              </svg>
+                        </a>
+                    </li>
+                    <!-- <li class="cart ml-1">
+                        <li class="has-dropdown" style="position: absolute; top: 0; right: 0;">
+                                <a class="dropdown-toggle " role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 40px;width: 40px;" class="img-xs rounded-circle" src="/assets/imgs/people/avatar2.jpg" alt="User"></a>									
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                    <a class="dropdown-item" href="#">Edit Profile</a>
+                                    <a class="dropdown-item" href="#">Settings</a>
+                                    <a class="dropdown-item" href="#">Wallet</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item text-danger" href="/admin/admin-logout"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                                </div>
+                        </li>
+                    </li> -->
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</script>
+<!-- jQuery -->
+<script src="js/jquery.min.js"></script>
+<!-- popper -->
+<script src="js/popper.min.js"></script>
+<!-- bootstrap 4.1 -->
+<script src="js/bootstrap.min.js"></script>
+<!-- jQuery easing -->
+<script src="js/jquery.easing.1.3.js"></script>
+<!-- Waypoints -->
+<script src="js/jquery.waypoints.min.js"></script>
+<!-- Flexslider -->
+<script src="js/jquery.flexslider-min.js"></script>
+<!-- Owl carousel -->
+<script src="js/owl.carousel.min.js"></script>
+<!-- Magnific Popup -->
+<script src="js/jquery.magnific-popup.min.js"></script>
+<script src="js/magnific-popup-options.js"></script>
+<!-- Date Picker -->
+<script src="js/bootstrap-datepicker.js"></script>
+<!-- Stellar Parallax -->
+<script src="js/jquery.stellar.min.js"></script>
+<!-- Main -->
+<script src="js/main.js"></script>

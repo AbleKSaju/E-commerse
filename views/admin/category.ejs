@@ -1,0 +1,200 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-categories.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:21 GMT -->
+<head>
+    <meta charset="utf-8">
+    <title>Stepz Dashboard</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/assets/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link href="/assets/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div class="screen-overlay"></div>
+    <%-include('../../partials/admin-header')%>
+    <main class="main-wrap">
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Categories </h2>
+                    <p>Add, edit or delete a category</p>
+                </div>
+                <div>
+                    <input type="text" placeholder="Search Categories" class="form-control bg-white">
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <%if(already==true){%>
+                                <p id="exist" class="text-danger">Category Already Exist</p>
+                                <%}%>
+                            <form method="post" action="/admin/admin-category" enctype="multipart/form-data">
+                                <div class="mb-4">
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                            <input type="file" name="image" required="true" class="custom-file-input" id="inputGroupFile01" accept="image/*"
+                                              aria-describedby="inputGroupFileAddon01" onchange="validateImageFile(this)">
+                                        </div>
+                                      </div>
+                                      <br>
+                                    <label for="product_name"  class="form-label">Name</label>
+                                    <input type="text" name="name" placeholder="Type here" maxlength="20" class="form-control" id="name" />
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Description</label>
+                                    <textarea placeholder="Type here" name="description" id="description" class="form-control"></textarea>
+                                </div>
+                                <p id="err-msg" class="text-danger"></p>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" type="submit" onclick="validate()">Create category</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>                                  
+                                            <th>Image</th>
+                                            <th>Name</th>
+                                            <th>Description</th>
+                                            <th></th>
+                                            <th class="text-end">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% categories.forEach(function(user) { %>
+                                        <tr>
+                                            <td>
+                                                <img src="/uploads/categories/<%= user.image %>" alt=""
+                                                     style="width: 40px; height: 40px;"
+                                                >
+                                              </td>
+                                            <td><b><%= user.name %></b></td>
+                                            <td><%= user.description %></td>
+                                            <%if(user.verified==0){%>
+                                            <td><a href="">
+                                                <button class="badge rounded-pill alert-success active-badge">Active</button>
+                                            </a></td>
+                                            <%} else {%>
+                                            <td> <a href="">
+                                                <button class="badge rounded-pill alert-danger inactive-badge">Inactive</button>
+                                            </a></td>
+                                            <%}%>
+
+                                   
+                                            <td class="text-end">
+                                                <div class="dropdown">
+                                                    <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
+                                                    <div class="dropdown-menu">
+                                                        
+                                                        <a href="/admin/edit-category/<%= user._id %>"
+                                                            class="btn btn-outline-success"
+                                                         >Edit</a>
+
+                                                        <a href="/admin/delete-category/<%= user._id %>"
+                                                            class="btn btn-outline-danger"
+                                                            onclick="return confirm('are you sure to Delete <%= user.name %> ?')"
+                                                         >Delete</a>
+                                                         <%if(user.verified==0){%>
+                                                         <a href="/admin/unlist-category/<%= user._id %>"
+                                                           class="btn btn-outline-danger "
+                                                           onclick="return confirm('Are you sure to Unlist <%= user.name %> ?')"
+                                                        >Unlist</a>
+                                                        <%} else {%>
+                                                            <a href="/admin/list-category/<%= user._id %>"
+                                                                class="btn btn-outline-success "
+                                                             >List</a>
+                                                            <%}%>
+                                                    </td>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> <!-- .col// -->
+                    </div> <!-- .row // -->
+                </div> <!-- card body .// -->
+            </div> <!-- card .// -->
+        </section> <!-- content-main end// -->
+    </main>
+    <script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/vendors/select2.min.js"></script>
+    <script src="/assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <script>
+        function validateImageFile(input) {
+    const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i; // Allowed image file extensions
+
+    const file = input.files[0]; // Get the selected file
+
+    if (!allowedExtensions.test(file.name)) {
+        alert("oi")
+        alert("Please select a valid image file (jpg, jpeg, png, gif).");
+        input.value = ""; // Clear the input field
+    }
+}
+
+
+
+       setTimeout(() => {
+        document.getElementById('exist').style.display='none'
+       }, 5000);
+    </script>
+    <!-- Main Script -->
+    <script src="/assets/js/main.js" type="text/javascript"></script>
+
+    <script>
+        function validate(){
+            document.getElementById('err-msg').innerHTML = ''
+            let name = document.getElementById('name').value;
+            const nameRegex = /^[A-Za-z0-9]{1,50}$/;
+    
+            if(nameRegex.test(name)){
+                document.getElementById('name').style.borderColor = 'white'
+            }else{  
+              document.getElementById('name').style.borderColor = 'red'
+              document.getElementById('name').style.borderWidth = '1px'
+              document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Name error'
+              //alert("Name Eroor 1:Start with capital letter 2:No white spaces 3:No Special symbols")
+              event.preventDefault()
+            }
+            
+    
+            const descRegex = /^(?!\s*$).+/; 
+    
+    
+            let description = document.getElementById('description').value;
+            if(descRegex.test(description)){
+                document.getElementById('name').style.borderColor = 'white'
+            }else{
+            document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Description  error'
+            document.getElementById('description').style.borderColor = 'red'
+            document.getElementById('description').style.borderWidth = '1px'
+            //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
+            event.preventDefault()
+            }
+        }
+      </script>
+    
+</body>
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-categories.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:21 GMT -->
+</html>
