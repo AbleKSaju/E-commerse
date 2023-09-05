@@ -21,10 +21,21 @@ const products = multer.diskStorage({
   },
 })
 
+const bannerManagement =multer.diskStorage({
+  destination:(req, file,cb)=>{
+    return cb(null, "public/uploads/banner")
+  },
+  filename:(req, file, cb)=>{
+    cb(null, Date.now() + file.originalname)
+  }
+})
+
 const update = multer({ storage: products });
 const upload = multer({ storage: storage });
+const banner = multer({ storage: bannerManagement})
 
 module.exports = {
   update,
   upload,
+  banner
 };

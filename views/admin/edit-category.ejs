@@ -102,6 +102,18 @@
       };
       reader.readAsDataURL(selectedFile);
     }
+    function validateImageFile(input) {
+    const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i; // Allowed image file extensions
+
+    const file = input.files[0]; // Get the selected file
+
+    if (!allowedExtensions.test(file.name)) {
+        alert("oi")
+        alert("Please select a valid image file (jpg, jpeg, png, gif).");
+        input.value = ""; // Clear the input field
+    }
+}
+
   </script>
       <script>
         function validate(){

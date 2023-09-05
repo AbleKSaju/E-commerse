@@ -135,9 +135,6 @@
                     </div>
                 </div>
                 <div class="card shadow-0 border">
-
-
-
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <p class="mb-2">Total price:</p>
@@ -156,12 +153,15 @@
                             <p class="mb-2">Total price:</p>
                             <p class="mb-2 fw-bold">₹ <%=total%></p>
                         </div>
-
                         <div class="mt-3">
                             <form action="/buy-now" method="post">
                                 <input type="hidden" name="total" value="<%=total%>">
-                                <button type="submit" class="btn btn-success w-100 shadow-0 mb-2"> Make Purchase</button> 
-                                <a href="#" class="btn btn-light w-100 border mt-2"> Back to shop </a>
+                                <%if(total==0){%>
+                                <button type="submit" class="btn btn-success w-100 shadow-0 mb-2" disabled> Make Purchase</button> 
+                                <%}else{%>
+                                    <button type="submit" class="btn btn-success w-100 shadow-0 mb-2"> Make Purchase</button> 
+                                    <%}%>
+                                <a href="/show-products" class="btn btn-light w-100 border mt-2"> Back to shop </a>
                             </form>
                         </div>
                     </div>
@@ -277,12 +277,11 @@
             
             proTotal = parseInt(proTotal);
             price = parseInt(price);
+
             if(count === 1){
                 document.getElementById(proId+'pro-total').innerHTML = proTotal+price
-                // document.getElementById(proId).innerHTML = quantity+1
             }else{
                 document.getElementById(proId+'pro-total').innerHTML = proTotal-price
-                // document.getElementById(proId).innerHTML = quantity-1
             }   
             let quantity = document.getElementById(proId).value
             

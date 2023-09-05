@@ -13,6 +13,11 @@ const orderModal=mongoose.Schema({
         require:true,
         type:String,
     },
+    createdOn: {
+        required: true,
+        type: Date,
+        default: Date.now
+    },
     date:{
         require:true,
         type:String

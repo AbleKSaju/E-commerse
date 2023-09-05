@@ -6,13 +6,11 @@ const isLogged=((req,res,next)=>{
             if(data.verified==0){
               next()
             }else{
-                res.session.user=null
-                req.session.isLogged=null
-                res.redirect('/login')
+                res.redirect('/logout')
             }
         })
     }else{
-        res.redirect('/login')
+        res.redirect('/')
     }
 })
 module.exports={

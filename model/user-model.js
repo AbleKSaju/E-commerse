@@ -31,6 +31,9 @@ const userModal=mongoose.Schema({
     cart:{
         type:Array
     },
+    wishList:{
+        type:Array,
+    },
     address:{
         type:Array
     }

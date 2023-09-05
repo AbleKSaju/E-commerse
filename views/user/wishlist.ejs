@@ -1,0 +1,93 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="container mt-5 mb-5">
+    <nav class="colorlib-nav" role="navigation">
+    
+        <%-include('../../partials/user-header')%>
+    </nav>
+    <div class="d-flex justify-content-center row">
+        <div class="col-md-10">
+            <%if(data.length){%>
+            <%for(i=0;i<data.length;i++){%>
+            <div class="row p-2 bg-white border rounded">
+                <div class="col-md-3 mt-1"><img class="img-fluid img-responsive rounded product-image" src="/uploads/products/<%=data[i].wishlist[0].image[0]%>"></div>
+                <div class="col-md-6 mt-1">
+                    <h5><%=data[i].wishlist[0].name%></h5>
+                    <div class="d-flex flex-row">
+                        <div class="ratings mr-2"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i></div><span>310</span>
+                    </div>
+                    <p class="text-justify mb-0"><%=data[i].wishlist[0].description%><br><br></p>
+                </div>
+                <div class="align-items-center align-content-center col-md-3 border-left mt-1">
+                    <div class="d-flex flex-row align-items-center">
+                        <h4 class="mr-1">₹ <%=data[i].wishlist[0].saleprice%></h4><span class="strike-text">₹ <%=data[i].wishlist[0].regularprice%></span>
+                        <svg class="ms-auto text-dark" style="margin-left: 13rem ;" aria-hidden="true" onclick="removeWishlist('<%= data[i].proId %>')"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                          </svg>
+                    </div>
+                    <h6 class="text-success">Free shipping</h6>
+                    <div class="d-flex flex-column mt-4">
+                    <a href="/product-display?id=<%= data[i].proId %>"><button class="btn btn-primary btn-sm" type="button">Details</button></a>
+                   <button onclick="addtoCart('<%= data[i].proId %>')" class="btn btn-outline-primary btn-sm mt-2 " type="button">Add to cart</button></a>
+                </div>
+                </div>
+            </div>
+            <%}%>
+            <%}else{%>
+                <div class="center-image">
+                    <img src="/images/noWishlist.jpeg" alt="" style="display: flex; justify-content: center; height: 30rem; width: 50rem;">
+                  </div>
+                  
+                <%}%>
+        </div>
+    </div>
+    <%-include('../../partials/user-footer')%>
+</div>
+<style>
+    body{background:#eee}.ratings i{font-size: 16px;color: red}.strike-text{color: red;text-decoration: line-through}.product-image{width: 100%}.dot{height: 7px;width: 7px;margin-left: 6px;margin-right: 6px;margin-top: 3px;background-color: blue;border-radius: 50%;display: inline-block}.spec-1{color: #938787;font-size: 15px}h5{font-weight: 400}.para{font-size: 16px}
+
+</style>
+<script>
+     function addtoCart(proId){
+                                           var quantity=1
+                                           var size='small'
+                                           $.ajax({
+                 
+                                                url:`/cart?id=${proId}`,
+                                                method:'post',
+                                                data:{
+                                                   quantity:quantity,
+                                                   size:size
+                                                },
+                                                success:(response)=>{
+                                         
+                                                   if (response.status === true) {
+                                                       Swal.fire({
+                                                         title: 'Added to Cart!',
+                                                         text:'Continue Shopping',
+                                                         icon: 'success',
+                                                         timer: 3000, 
+                                                         showConfirmButton: false 
+                                                       })
+                                                   }else{
+                                                       alert("Error ocured")
+                                                   }
+                                                }
+                                           })
+                                       }
+                                       function removeWishlist(proId){
+                                        $.ajax({
+                                            url:'/removeWishlist',
+                                            method:"post",
+                                            data:{
+                                                proId
+                                            },success:()=>{
+                                                location.reload()
+                                            }
+                                        })
+                                       }
+
+</script>

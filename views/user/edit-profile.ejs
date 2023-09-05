@@ -64,14 +64,17 @@
             </div>
             <div class="col-lg-8">
                 <div class="card">
-                    <form action="/edit-profile/<%=userData._id%>" method="post">
+                    <%if(locals.exist){%>
+                        <p class="text-danger"><%=exist%></p>
+                    <%}%>
+                    <form action="/edit-profile" method="post">
                     <div class="card-body p-5">
                         <div class="row mb-3">
                             <div class="col-sm-3">
                                 <h6 class="mb-0">Full Name</h6>
                             </div>
                             <div class="col-sm-9 text-secondary">
-                                <input id="name" name="name" type="text" class="form-control" value="<%=userData.name%>">
+                                <input id="name" name="name" type="text" style="padding-right: 30%;"  value="<%=userData.name%>">
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -79,10 +82,8 @@
                                 <h6 class="mb-0">Email</h6>
                             </div>
                             <div class="col-sm-9 text-secondary">
-                                <%if(exist){%>
-                                    <p class="text-danger"> Account already exist</p>
-                                <%}%>
-                                <input id="email" name="email" type="text" class="form-control" value="<%=userData.email%>">
+                                <input id="email" name="email" type="email" style="padding-right: 30%;"  value="<%=userData.email%>">
+                                <input  name="originalEmail" type="hidden" value="<%=userData.email%>">
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -90,13 +91,13 @@
                                 <h6 class="mb-0">Phone</h6>
                             </div>
                             <div class="col-sm-9 text-secondary">
-                                <input id="number" name="number" type="text" class="form-control" value="<%=userData.mobile%>">
+                                <input id="number" name="number" type="tel" style="padding-right: 30%;"  value="<%=userData.mobile%>">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-3"></div>
                             <div class="col-sm-9 text-secondary">
-                                <input type="submit" class="btn btn-primary px-4" value="Save Changes">
+                                <input type="submit" onclick="validate()" class="btn btn-primary px-4" value="Save Changes">
                             </div>
                         </div>
                     </div>
@@ -108,27 +109,21 @@
 </div>
 
 <script>
-    // function validate(){
-    //     const nameRegex = /^[A-Z][a-z]*$/;
-    //     let name = document.getElementById('name').value;
-    //     if(nameRegex.test(name)){}else{
-    //         alert("Errrr")
-    //         document.getElementById('name').style.borderColor = 'red';
-    //         event.preventDefault()
-    //     }
-    //     const phoneNumberRegex = /^\d{10}$/;
-    //     let number = document.getElementById('number').value;
-    //     if(phoneNumberRegex.test(number)){}else{
-    //         document.getElementById('number').style.borderColor = 'red';
-    //         event.preventDefault()
-    //     }
-    //     const emailRegex = '/^[\w\.-]+@[\w\.-]+\.\w+$/';
-    //     let email = document.getElementById('email').value;
-    //     if(emailRegex.test(email)){}else{
-    //         document.getElementById('email').style.borderColor = 'red';
-    //         event.preventDefault()
-    //     }
+     function validate(){
+        const nameRegex = /^[A-Za-z][A-Za-z\s'-]+$/;
+        let name = document.getElementById('name').value;
+        if(nameRegex.test(name)){}else{
+            alert("Errrr")
+            document.getElementById('name').style.borderColor = 'red';
+            event.preventDefault()
+        }
+        const phoneNumberRegex = /^\d{10}$/;
+        let number = document.getElementById('number').value;
+        if(phoneNumberRegex.test(number)){}else{
+            document.getElementById('number').style.borderColor = 'red';
+            event.preventDefault()
+        }
 
 
-    // }
+    }
 </script>

@@ -58,7 +58,7 @@
                         
                                   <!-- Email input -->
                                   <div class="form-outline mb-4">
-                                    <input id="area"   type="text"  class="forms-control area" name="area" placeholder="Area, Street, Sector, Village">
+                                    <input id="area"   type="text"  class="forms-control" name="area" placeholder="Area, Street, Sector, Village">
                                   </div>
                         
                                   <!-- Number input -->
@@ -91,7 +91,9 @@
                       function validate(){
                           document.getElementById('err-msg').innerHTML = ''
                           let name = document.getElementById('name').value;
-                          const nameRegex = /^[A-Za-z0-9]{1,50}$/;
+                          // const nameRegex = /^[A-Za-z0-9]{1,50}$/;
+                          const nameRegex = /^[A-Za-z][A-Za-z\s'-]+$/
+;
                   
                           if(nameRegex.test(name)){
                               document.getElementById('name').style.borderColor = 'white'
@@ -103,6 +105,7 @@
                           }
                           
                           const numberRegex =/^\d{10}$/
+
                   
                           let number = document.getElementById('number').value;
                           if(numberRegex.test(number)){
@@ -116,8 +119,6 @@
                           }
                   
                           const altnumberRegex = /^\d{10}$/
-                  
-                  
                           let altnumber = document.getElementById('altnumber').value;
                           if(altnumberRegex.test(altnumber)){
                               document.getElementById('altnumber').style.borderColor = 'white'
@@ -125,26 +126,24 @@
                           document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Alt Number error'
                           document.getElementById('altnumber').style.borderColor = 'red'
                           document.getElementById('altnumber').style.borderWidth = '1px'
-                          //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
                           event.preventDefault()
                           }
                   
-                          const pincodeRegex =/^\d{6}$/
+                          const pincodeRegex =/^(\d{6}|68\d{4})$/
                   
                   
-                          let pincode = document.getElementById('pincode');
+                          let pincode = document.getElementById('pincode').value
                           if(pincodeRegex.test(pincode)){
                               document.getElementById('pincode').style.borderColor = 'white'
                           }else{
                           document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Pincode  error'
                           document.getElementById('pincode').style.borderColor = 'red'
                           document.getElementById('pincode').style.borderWidth = '1px'
-                          //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
                           event.preventDefault()
                           }
-                    
-                  
-                          const houseRegex = /^[A-Za-z0-9]{1,50}$/
+                          
+
+                          const houseRegex = /[\dA-Za-z\s,'.-]+/
                   
                   
                   
@@ -159,7 +158,7 @@
                           event.preventDefault()
                           }
                   
-                          const areaRegex =/^[A-Za-z0-9]{1,50}$/
+                          const areaRegex =/\b[A-Za-z0-9\s()]+\b/
                   
                   
                   

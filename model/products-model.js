@@ -16,6 +16,10 @@ const productModal=mongoose.Schema({
         type:String,
         require:true
     },
+    subCategory:{
+        type:String,
+        require:true
+    },
     regularprice:{
         type:String,
         require:true

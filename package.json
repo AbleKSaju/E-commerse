@@ -10,6 +10,7 @@
     "body-parser": "^1.20.2",
     "busboy-body-parser": "^0.3.2",
     "cookie-parser": "~1.4.3",
+    "crypto": "^1.0.1",
     "debug": "~2.6.0",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
@@ -21,9 +22,10 @@
     "nocache": "^4.0.0",
     "nodemailer": "^6.9.4",
     "nodemon": "^3.0.1",
+    "razorpay": "^2.9.2",
     "serve-favicon": "^2.5.0",
     "session": "^0.1.0",
-    "sharp": "^0.32.4",
-    "sweetalert2": "^11.7.26"
+    "sharp": "^0.32.5",
+    "sweetalert2": "^11.6.13"
   }
 }

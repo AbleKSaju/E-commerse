@@ -275,6 +275,12 @@
                         <div class="card-body">
                             <div class="row gx-2">
                                 <div class="col-sm-6 mb-3">
+                                  <label class="form-label">Sub Category</label>
+                                    <select name="subCategory" class="form-select">
+                                        <option>Women</option>
+                                        <option>Kids</option>
+                                        <option>Men</option>
+                                    </select>
                                     <label class="form-label">Category</label>
                                     <select name="category" class="form-select">
                                         <%for(i=0;i<data.length;i++){%>
@@ -291,6 +297,18 @@
     
     </main>
     <script>
+              function validateImageFile(input) {
+    const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i; // Allowed image file extensions
+
+    const file = input.files[0]; // Get the selected file
+
+    if (!allowedExtensions.test(file.name)) {
+        alert("oi")
+        alert("Please select a valid image file (jpg, jpeg, png, gif).");
+        input.value = ""; // Clear the input field
+    }
+}
+
     function validate(){
         document.getElementById('err-msg').innerHTML = ''
         let name = document.getElementById('name').value;

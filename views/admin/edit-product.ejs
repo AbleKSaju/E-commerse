@@ -188,7 +188,7 @@
                             <p>Images</p>
                             <%for(i=0;i<data.image.length;i++){%>
                                 <img src="/uploads/products/<%=data.image[i]%>" alt="Something fishyy.." width="80" height="80" accept="image/*"
-   onchange="validateImageFile(this)">
+                                    onchange="validateImageFile(this)">
                                 <%}%>
                            
                         </div>
@@ -208,6 +208,13 @@
                         <div class="card-body">
                             <div class="row gx-2">
                                 <div class="col-sm-6 mb-3">
+                                    <label class="form-label">Sub Category</label>
+                                    <select name="subCategory" class="form-select">
+                                        <option><%=data.subCategory%></option>
+                                        <option>Women</option>
+                                        <option>Kids</option>
+                                        <option>Men</option>
+                                    </select>
                                     <label class="form-label">Category</label>
                                     <select name="category" class="form-select">
                                         <option><%=data.category%></option>

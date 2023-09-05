@@ -3,14 +3,21 @@ const user = require("../model/user-model");
 const product = require("../model/products-model");
 const categories = require("../model/category-model");
 const bcrypt = require("bcrypt");
+const mongodb = require("mongodb");
+const order = require("../model/order-model");
 const { log } = require("debug/src/browser");
+const { search } = require("../routes/users");
 
 const adminLoggin = (req, res) => {
+  if (req.session.adminLoggedIn == true) {
+    res.render("admin/dashboard");
+  } else {
   res.render("admin/login", {
     email: req.session.emilErr,
     pass: req.session.pasErr,
     notAdmin: req.session.notAdmin,
   });
+}
 };
 
 const adminIndex = (req, res) => {
@@ -70,36 +77,9 @@ const adminCategory = async (req, res) => {
     });
 };
 
-// const catCreation = async (req, res) => {
-//   var cat = req.body;
-//   await categories.find({name:cat.name}).lean()
-//   .then((data)=>{
-//     if(data.length==0){
-//       let create =  new categories({
-//         name: cat.name,
-//         description: cat.description,
-//         unit: cat.unit,
-//         image: req.file.filename,
-//       });
-//       create
-//         .save()
-//         .then((data) => {
-//           res.redirect("/admin/admin-category");
-//         })
-//         .catch((err) => {
-//           console.log(err)
-//         })
-//     }else{
-//       req.session.Already=true
-//       res.redirect('/admin/admin-category')
-//     }
-//   })
-// }
-
 const catCreation = async (req, res) => {
   const cat = req.body;
   const catNamePattern = new RegExp(`^${cat.name}$`, "i");
-  console.log(catNamePattern, "cat");
   await categories
     .findOne({ name: catNamePattern })
     .lean()
@@ -108,7 +88,6 @@ const catCreation = async (req, res) => {
         const create = new categories({
           name: cat.name,
           description: cat.description,
-          unit: cat.unit,
           image: req.file.filename,
         });
         create
@@ -153,74 +132,31 @@ const editCategoryPage = async (req, res) => {
     });
 };
 
-// const editCategory = async (req, res) => {
-//   var id = req.body.id;
-//   console.log(req.body,"Body");
-//   await categories
-//     .find({ name: req.body.name })
-//     .lean()
-//     .then((data) => {
-//       console.log(data.name);
-//       if (!data.name) {
-//         console.log("ooooooo");
-//         if (req.file) {
-//           console.log("file");
-//           categories.findByIdAndUpdate(
-//             id,
-//             {
-//               name: req.body.name,
-//               description: req.body.description,
-//               image: req.file.filename,
-//             },
-//             { new: true }
-//           );
-//           res.redirect("/admin/admin-category");
-//         } else {
-//           console.log("nofile");
-//           categories.findByIdAndUpdate(
-//             id,
-//             {
-//               name: req.body.name,
-//               description: req.body.description,
-//             },
-//             { new: true }
-//           );
-//           res.redirect("/admin/admin-category");
-//         }
-//       } else {
-//         console.log("elsee");
-//         req.session.catExist = true;
-//         res.redirect(`/admin/edit-category/${id}`);
-//       }
-//     });
-// };
-
 const editCategory = async (req, res) => {
   var id = req.body.id;
 
   try {
-    // Use a regular expression with 'i' flag for case-insensitive matching
-    const existingCategory = await categories.findOne({
-      name: { $regex: new RegExp(req.body.name, 'i') },
-    }).lean();
+    const existingCategory = await categories
+      .findOne({
+        name: { $regex: new RegExp(req.body.name, "i") },
+      })
+      .lean();
 
-    if (!existingCategory) {
+    if (!existingCategory || existingCategory.name==req.body.name) {
       const updateData = {
         name: req.body.name,
         description: req.body.description,
-      };
+      }
 
       if (req.file) {
         updateData.image = req.file.filename;
       }
-
-      // Use findByIdAndUpdate and exec to update the document
       const updatedCategory = await categories
         .findByIdAndUpdate(id, updateData, { new: true })
         .exec();
 
       if (!updatedCategory) {
-        return res.status(404).send('Category not found');
+        return res.status(404).send("Category not found");
       }
 
       return res.redirect("/admin/admin-category");
@@ -230,13 +166,12 @@ const editCategory = async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).send('Internal Server Error');
+    return res.status(500).send("Internal Server Error");
   }
 };
 
 const unlistCategory = (req, res) => {
   id = req.params.id;
-  console.log(id);
   categories
     .findByIdAndUpdate(id, { verified: "1" })
     .then((data) => {
@@ -259,13 +194,67 @@ const listCategory = (req, res) => {
     });
 };
 
+// const productDisplay = async (req, res) => {
+//   await categories.find({}).then((cat) => {
+//   if(req.query.search){
+//    const search=req.query.search
+//     product.find({
+//       $or:[
+//         { 
+//           name: { $regex: ".*" + search + ".*", $options: 'i' },
+//         },
+//         {
+//           saleprice: { $regex: ".*" + search + ".*", $options: 'i' },
+//         },
+//       ]
+//     }).lean()
+//     .then((data)=>{
+//       res.render("admin/products", { product: data, cat: cat });
+//     })
+//   }else{
+//     product.find({}).then((data) => {
+//       res.render("admin/products", { product: data, cat: cat });
+//     })
+//   }
+//   })
+// }
 const productDisplay = async (req, res) => {
-  await categories.find({}).then((cat) => {
-    product.find({}).then((data) => {
-      res.render("admin/products", { product: data, cat: cat });
+  try {
+    const allCategories = await categories.find({}).lean();
+
+    const currentPage = parseInt(req.query.page) || 1;
+    const itemsPerPage = 8;
+
+    const search = req.query.search || '';
+
+    const searchQuery = {
+      $or: [
+        { name: { $regex: ".*" + search + ".*", $options: 'i' } },
+        { saleprice: { $regex: ".*" + search + ".*", $options: 'i' } },
+      ],
+    };
+
+    const totalProducts = await product.countDocuments(searchQuery);
+    const totalPages = Math.ceil(totalProducts / itemsPerPage);
+
+    const products = await product
+      .find(searchQuery)
+      .skip((currentPage - 1) * itemsPerPage)
+      .limit(itemsPerPage)
+      .lean();
+
+    res.render("admin/products", {
+      product: products,
+      cat: allCategories,
+      currentPage,
+      totalPages,
     });
-  });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
 };
+
 
 const addProductPage = async (req, res) => {
   await categories.find({}).then((data) => {
@@ -279,6 +268,7 @@ const addProduct = async (req, res) => {
     name: req.body.name,
     description: req.body.description,
     category: req.body.category,
+    subCategory:req.body.subCategory,
     regularprice: req.body.regularprice,
     saleprice: req.body.saleprice,
     createdon: Date.now(),
@@ -334,7 +324,6 @@ const editProductPage = async (req, res) => {
 };
 
 const editProduct = async (req, res) => {
-  console.log(req.body);
   var id = req.body.id;
   var size = req.body.size;
   if (req.files != 0) {
@@ -349,6 +338,7 @@ const editProduct = async (req, res) => {
         taxrate: req.body.taxrate,
         size: size,
         category: req.body.category,
+        subCategory:req.body.subCategory,
         image: [
           req.files[0].filename,
           req.files[1].filename,
@@ -371,6 +361,7 @@ const editProduct = async (req, res) => {
         taxrate: req.body.taxrate,
         size: size,
         category: req.body.category,
+        subCategory: req.body.subCategory,
       },
       { new: true }
     );
@@ -418,6 +409,103 @@ const listUser = async (req, res) => {
   });
 };
 
+const orders = async (req, res) => {
+  await order
+    .find()
+    .lean().sort({createdOn:-1})
+    .then((data) => {
+      res.render("admin/orders", { data: data });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const cancelOrder = async (req, res) => {
+  await order
+    .updateOne({ _id: req.body.id }, { status: "-1" })
+    .then((data) => {
+      res.json(true);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.json(false);
+    });
+};
+
+const makeOrder = async (req, res) => {
+  await order
+    .updateOne({ _id: req.body.id }, { status: "0" })
+    .then((data) => {
+      res.json(true);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.json(false);
+    });
+};
+
+const approved = async (req, res) => {
+  await order
+    .updateOne({ _id: req.body.id }, { status: "1" })
+    .then((data) => {
+      res.json(true);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.json(false);
+    })
+}
+
+const orderDetails = async (req, res) => {
+  var orderId = req.query.id;
+  var oid = new mongodb.ObjectId(orderId);
+  var Details = await order.aggregate([
+    { $match: { _id: oid } },
+    { $unwind: "$product" },
+    {
+      $project: {
+        proId: { $toObjectId: "$product.productId" },
+        totalPrice: "$totalPrice",
+        status: "$status",
+      },
+    },
+    {
+      $lookup: {
+        from: "products",
+        localField: "proId",
+        foreignField: "_id",
+        as: "ProductDetails",
+      },
+    },
+  ]);
+  order
+    .find({ _id: orderId })
+    .lean()
+    .then((data) => {
+      res.render("admin/order-details", {
+        data: data,
+        details: Details,
+        pDetails: Details.ProductDetails,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const delivered = async (req, res) => {
+  await order
+    .updateOne({ _id: req.body.id }, { status: "2" })
+    .then((data) => {
+      res.json(true);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.json(false);
+    });
+};
+
 const logOut = (req, res) => {
   req.session.adminLoggedIn = null;
   req.session.emilErr = false;
@@ -429,6 +517,12 @@ module.exports = {
   adminIndex,
   loginConfirm,
   dashboard,
+  orders,
+  cancelOrder,
+  makeOrder,
+  approved,
+  orderDetails,
+  delivered,
   adminCategory,
   deleteCategory,
   catCreation,

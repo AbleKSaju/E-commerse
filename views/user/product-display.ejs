@@ -16,11 +16,6 @@
     <!-- Template CSS -->
     <link href="assets/css/main.css" rel="stylesheet" type="text/css" />
     <meta charset="utf-8">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
  <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700" rel="stylesheet">
@@ -96,139 +91,116 @@
                 <nav class="colorlib-nav" role="navigation">
                     <%-include('../../partials/user-header')%>
             </nav>
-                <style>
-                  #img-zoomer-box {
-                          max-width: 500px !important;
-                          height: auto !important;
-                          position: relative !important;
-                          margin: 10px auto !important;
-                      }
-              
-                      selectedImage {
-                          width: 100% !important;
-                          height: auto !important;
-                      }
-              
-                      #img-zoomer-box:hover,
-                      #img-zoomer-box:active {
-                          cursor: zoom-in !important;
-                          display: block !important;
-                      }
-              
-                      #img-zoomer-box:hover #img-2,
-                      #img-zoomer-box:active #img-2 {
-                          opacity: 1 !important;
-                      }
-              
-                      #img-2 {
-                          width: 350px !important;
-                          height: 350px !important;
-                          margin-top: -120px;
-                          margin-left: -150px;
-                          background: url('/uploads/products/<%=data[0].image[0]%>') no-repeat #FFF;
-                          box-shadow: 0 5px 10px -2px rgba(0, 0, 0, 0.3);
-                          pointer-events: none !important;
-                          position: absolute !important;
-                          opacity: 0;
-                          border: 4px solid whitesmoke;
-                          z-index: 99;
-                          
-                          
-                          border-radius: 100%;
-                          display: block;
-                          transition: opacity .2s;
-                      }
-                </style>
+  
               </head>
-              <!-- content -->
               <section class="py-5">
                 <div class="container">
                   <div class="row gx-5">
-                   
-              
-              
                     <aside class="col-lg-6">
                       <div class="border rounded-4 mb-3 d-flex justify-content-center">
-                              <div id="img-zoomer-box">
-                                  <img id="selectedImage" style="max-width: 100%; max-height: 100vh; margin: auto;"
-                                      class="rounded-4 fit" src="/uploads/products/<%=data[0].image[0]%>" />
-                                  <div id="img-2"></div>
-                              </div>
+                        <div id="img-zoomer-box">
+                          <img id="selectedImage" style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit" src="/uploads/products/<%=data[0].image[0]%>" />
+                          <div id="img-2"></div>
+                        </div>
                       </div>
                       <div class="d-flex justify-content-center mb-3">
                         <% for (let i = data[0].image.length - 1; i >= 0; i--) { %>
-                              <a data-fslightbox="mygallery" class="border mx-1 rounded-2" data-type="image" href="#"
-                                  onclick="changeImage('<%= data[0].image[i] %>')" class="item-thumb">
-                                  <img width="60" height="60" class="rounded-2" src="/uploads/products/<%= data[0].image[i] %>" />
-                              </a>
-                              <% } %>
+                          <a data-fslightbox="mygallery" class="border mx-1 rounded-2" data-type="image" href="#" onclick="changeImage('<%= data[0].image[i] %>')" class="item-thumb">
+                            <img width="60" height="60" class="rounded-2" src="/uploads/products/<%= data[0].image[i] %>" />
+                          </a>
+                        <% } %>
                       </div>
-
-                    
-                      <!-- thumbs-wrap.// -->
-                      <!-- gallery-wrap .end// -->
-                  </aside>
-              
+                    </aside>
               
                     <main class="col-lg-6">
                       <div class="ps-lg-3">
-                        <h3 class="title text-dark"><%= data[0].name %>
-                         
-                        </h3>
-                        <p>
-                            <%= data[0].description %>
-                           
-                          </p>
-                       
+                        <form id="myForm" action="/buy/<%= data[0]._id %>" method="post">
+                          <h3 class="title text-dark mt-4"><%= data[0].name %></h3>
+                          <p><%= data[0].description %></p>
+                          <div class="mt-5 mb-3">
+                            <div>
+                              <span class="product_price fs-5">₹ <%=data[0].saleprice%></span> &nbsp;
+                              <strike class="product_discount">
+                                <span style='color:black'>₹ <%=data[0].regularprice%></span>
+                              </strike>
+                            </div>
+                            <div>
+                              <span class="product_saved">You Saved:</span>
+                              <span style='color:black'>₹ <%=data[0].saleprice-data[0].regularprice%></span>
+                            </div>
+                            <input type="hidden" name="totalPrice" value="<%=data[0].saleprice%>">
+                          </div>
+                          <hr />
+                          <p class="text-danger" id="unit">only <%=data[0].units%> stocks left </p>
               
-                        <div class="mt-5 mb-3">
-                            <div> <span class="product_price">₹ <%=data[0].saleprice%></span> <strike class="product_discount"> <span style='color:black'>₹ <%=data[0].regularprice%><span> </strike> </div>
-                                <div> <span class="product_saved">You Saved:</span> <span style='color:black'>₹ <%=data[0].saleprice-data[0].regularprice%><span> </div>
-                          
-                        </div>
-              
-                        
-              
-                        
-              
-                        <hr />
-              
-                       <%if(data[0].units<10){%>
-                        <p class="text-danger" id="unit">only <%=data[0].units%> stocks left </p>
-                        <%}%>
-              
-                        <div class="row mb-4">
-                         
-                          <!-- col.// -->
+                          <div class="row mb-4">
                             <div class="col-md-4 col-6 mb-3">
+                              <label class="mb-2">Size</label>
+                              <select name="size" id="selectedSizeInput" value="" class="form-select border border-secondary" style="height: 35px; width: 10rem;">
+                                <option>Small</option>
+                                <option>Medium</option>
+                                <option>Large</option>
+                              </select>
                               <label class="mb-2 d-block">Quantity</label>
                               <div class="input-group mb-3" style="width: 170px;">
-                              <button class="btn btn-white border border-secondary px-3" type="button" id="decrementButton" data-mdb-ripple-color="dark">
-                               -
-                              </button>
-                              <input name="quantity" type="text" id="quantityInput" class="form-control text-center border border-secondary" value="1" aria-label="Example text with button addon" aria-describedby="decrementButton" />
-                              <button class="btn btn-white border border-secondary px-3" type="button" onclick="checkStock('<%=data[0].units%>')" id="incrementButton" data-mdb-ripple-color="dark">
-                                +
-                              </button>
+                                <button class="btn btn-white border border-secondary px-3" type="button" id="decrementButton" data-mdb-ripple-color="dark">-</button>
+                                <input name="quantity" type="text" id="quantityInput" class="form-control text-center border border-secondary" value="1" aria-label="Example text with button addon" aria-describedby="decrementButton" />
+                                <button class="btn btn-white border border-secondary px-3" type="button" onclick="checkStock('<%=data[0].units%>')" id="incrementButton" data-mdb-ripple-color="dark">+</button>
                               </div>
+                            </div>
                           </div>
-                          </div>
-                        </div>
-                        <a onclick="buyNow()" style="background-color: #ff3368; color: #ffff;" class="btn  shadow-0"> Buy now </a>
-                        <button type="button" id="popupButton" class="btn btn-warning shop-button" onclick="addtoCart('<%=data[0]._id%>')"  >Add to Cart</button>
-                        <a href="#" class="btn btn-light border border-secondary py-2 icon-hover px-3"> <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
+              
+                          <button type="button" onclick="buy('<%=data[0].units%>')" style="background-color: #ff3368; color: #ffff;" class="btn shadow-0"> Buy now </button>
+                          <button type="button" id="popupButton" class="btn btn-warning shop-button" onclick="addtoCart('<%=data[0]._id%>')">Add to Cart</button>
+                          <button type="button" onclick="wishlist('<%=data[0]._id%>')" class="btn btn-dark border border-secondary py-2 icon-hover px-3">
+                            <i class="me-1 fa fa-heart fa-lg"></i> Save
+                          </button>
+                        </form>
                       </div>
-                    
                     </main>
                   </div>
                 </div>
               </section>
-              <!-- content -->
               
-              <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-                  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
-                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+              <div class="container">
+                <h2 class="mt-5 mb-3 text-center" style="background-color: #f8f8f8; border: 1px solid #ddd; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); padding: 10px;">
+                  Related Items
+                </h2>
+                
+                <div class="row">
+                  <% for (let i = Math.min(products.length, 4); i >0 ; i--) { %>
+                    <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
+                      <div class="product-entry border">
+                        <a href="/product-display?id=<%= products[i]._id %>" class="img-wrap PROD-IMG">
+                          <img src="/uploads/products/<%= products[i].image[0] %>" class="img-fluid" style="height: 18rem; width: 25rem;" alt="Product">
+                        </a>
+                        <div class="desc">
+                          <h2 class="mb-0"><%= products[i].name %></h2>
+                          <div class="price"> 
+                            ₹ <%= products[i].saleprice %> &nbsp; &nbsp;
+                            <strike class="product_discount"> 
+                              <span style='color:black'>₹ <%= products[i].regularprice %></span>
+                            </strike>
+                          </div>
+                          <% if (isLoggedIn) { %>
+                            <b onclick="(addtoCart('<%= products[i]._id %>'))" class="btn btn-sm btn-brand rounded ml-5 mr-5">
+                              Add to Cart
+                            </b>
+                          <% } %>
+                          <div class="description mt-2">
+                            <% const words = products[i].description.split(' '); %>
+                            <% const truncatedDescription = words.slice(0, 7).join(' '); %>
+                            <%= truncatedDescription %>...
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  <% } %>
+                </div>
+              </div>
               
+              <br>
+              <%-include('../../partials/user-footer')%>
               <script>
                 function changeImage(newImageSrc) {
                   document.getElementById('img-2').style.backgroundImage = "url("+'/uploads/products/' + newImageSrc + ")";
@@ -249,7 +221,7 @@
                     currentQuantity = Math.max(currentQuantity - 1, 1);
                     quantityInput.value = currentQuantity;
                   }
-                });
+                })
               
                 incrementButton.addEventListener("click", () => {
                   let currentQuantity = parseInt(quantityInput.value);
@@ -258,6 +230,18 @@
                     quantityInput.value = currentQuantity;
                   }
                 });
+               function buy(units) {
+    if (parseInt(units) <= 0) {
+        Swal.fire({
+            title: 'STOCK!',
+            text: 'Product is out of stock.',
+            icon: 'error',
+            timer: 3000
+        });
+    } else {
+        document.getElementById("myForm").submit()
+}
+               }
               
                 function checkStock(unit){
                       let quantity = document.getElementById('quantityInput').value;
@@ -273,7 +257,6 @@
                           document.getElementById('quantityInput').value = quantity-1;
                       }
                   }
-              
               
                  function addtoCart(proId){
                               var quantity=document.getElementById("quantityInput").value
@@ -294,13 +277,48 @@
                                             timer: 3000, 
                                             showConfirmButton: false 
                                           })
+                                      }else if(response.status==="outOfStock"){
+                                        Swal.fire({
+                                        title: 'Stock!!',
+                                        text: "the products is out of stock",
+                                        icon: 'error',
+                                        timer: 5000
+                                    })
                                       }else{
                                           alert("Error ocured")
                                       }
                                    }
                               })
                           }
-              
+
+function wishlist(proId) {
+  $.ajax({
+    url: '/wishlist',
+    method: 'post',
+    data: {
+      proId
+    },
+    success: (response) => {
+      if (response.status===true) {
+                Swal.fire({
+                    title: 'WISHLIST',
+                    text: 'Product added to wishlist.',
+                    icon: 'success',
+                    timer: 5000
+                })
+      } else if (response.exist === true) {
+        Swal.fire({
+          title: 'Exist!',
+          text: 'Product already in wishlist',
+          icon: 'error',
+          timer: 3000,
+          showConfirmButton: false,
+        });
+      }
+    },
+  });
+}
+          
                 let zoomer = function () {
                       document.querySelector('#img-zoomer-box')
                           .addEventListener('mousemove', function (e) {
@@ -333,11 +351,56 @@
                   }();
               </script>
 
+                <style>
+                  #img-zoomer-box {
+                          max-width: 500px !important;
+                          height: auto !important;
+                          position: relative !important;
+                          margin: 10px auto !important;
+                      }
+              
+                      .selectedImage {
+                          width: 100% !important;
+                          height: auto !important;
+                      }
+              
+                      #img-zoomer-box:hover,
+                      #img-zoomer-box:active {
+                          cursor: zoom-in !important;
+                          display: block !important;
+                      }
+              
+                      #img-zoomer-box:hover #img-2,
+                      #img-zoomer-box:active #img-2 {
+                          opacity: 1 !important;
+                      }
+                      .pl-3, .px-3 {
+    padding-left: 1rem!important;
+    padding-bottom: 9%;
+}
+.input-group > :not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
+    margin-left: -3px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+                      #img-2 {
+                          width: 350px !important;
+                          height: 350px !important;
+                          margin-top: -120px;
+                          margin-left: -150px;
+                          background: url('/uploads/products/<%=data[0].image[0]%>') no-repeat #FFF;
+                          box-shadow: 0 5px 10px -2px rgba(0, 0, 0, 0.3);
+                          pointer-events: none !important;
+                          position: absolute !important;
+                          opacity: 0;
+                          border: 4px solid whitesmoke;
+                          z-index: 99;
+                          border-radius: 100%;
+                          display: block;
+                          transition: opacity .2s;
+                      }
+                </style>
 
-
-
-
-</script>
 	<!-- jQuery -->
 	<script src="js/jquery.min.js"></script>
    <!-- popper -->
