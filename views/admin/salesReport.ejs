@@ -21,7 +21,7 @@
 
 <body>
     <div class="screen-overlay"></div>
-    <aside class="navbar-aside" id="offcanvas_aside">
+    <!-- <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
             <a href="index.html" class="brand-wrap">
                 <img src="//assets/imgs/theme/logo.svg" class="logo" alt="Evara Dashboard">
@@ -93,7 +93,6 @@
                         <a href="page-seller-detail.html">Seller profile</a>
                     </div>
                 </li>
-               
                 <li class="menu-item has-submenu">
                     <a class="menu-link" href="page-transactions-1.html"> <i class="icon material-icons md-monetization_on"></i>
                         <span class="text">Transactions</span>
@@ -113,7 +112,6 @@
                     <a class="menu-link" href="page-brands.html"> <i class="icon material-icons md-stars"></i>
                         <span class="text">Brands</span> </a>
                 </li>
-               
             </ul>
             <hr>
             <ul class="menu-aside">
@@ -135,7 +133,7 @@
             <br>
             <br>
         </nav>
-    </aside>
+    </aside> -->
     <%- include('../../partials/admin-header')%>
     <main class="main-wrap">
         <section class="content-main">
@@ -144,16 +142,11 @@
                     <h2 class="content-title card-title">Sales Report </h2>
                     
                 </div>
-                <div>
-                    <input type="text" placeholder="Search order ID" class="form-control bg-white">
-                </div>
             </div>
             <div class="card mb-4">
                 <header class="card-header">
                     <div class="row gx-3">
-                        <div class="col-lg-4 col-md-6 me-auto">
-                            <input type="text" placeholder="Search..." class="form-control">
-                        </div>
+                
                       
                                 <div class="col-lg-2 col-6 col-md-3">
                                     <select class="form-select" onchange="location.href='/admin/salesReport?day=' + this.value">
@@ -180,18 +173,6 @@
                                       <% } %>
                                     </select>
                                   </div>
-                                  
-                         
-        
-                          
-                        
-                        <div class="col-lg-2 col-6 col-md-3">
-                            <select class="form-select">
-                                <option>Show 20</option>
-                                <option>Show 30</option>
-                                <option>Show 40</option>
-                            </select>
-                        </div>
                     </div>
                 </header> <!-- card-header end// -->
                 <div class="card-body">
@@ -235,7 +216,7 @@
       </td>
       <td class="text-end"><%= order[i].totalPrice %></td>
     </tr>
-    <% for (let j = 0; j < order[i].product.length-1; j++) { %>
+    <!-- <% for (let j = 0; j < order[i].product.length-1; j++) { %>
         <tr>
             <td></td>
             <td></td>
@@ -256,7 +237,7 @@
             </td>
             <td class="text-end"></td>
           </tr>
-        <% } %>
+        <% } %> -->
 
   <% } %>
 
@@ -264,6 +245,22 @@
                                
                             </tbody>
                         </table>
+                        <% if (totalpages) { %>
+                            <div class="pagination">
+                              <% if (currentpage > 1) { %>
+                                <button><a href="?page=<%= currentpage - 1 %>">Previous</a></button>
+                              <% } %>
+                          
+                              <% for (let i = 1; i <= totalpages; i++) { %> <!-- Change the loop to start from 1 and go up to totalpages -->
+                                <button><a href="?page=<%= i %>" class="<%= i === currentpage ? 'active' : '' %>"><%= i %></a></button>
+                              <% } %>
+                          
+                              <% if (currentpage < totalpages) { %>
+                                <button><a href="?page=<%= currentpage + 1 %>">Next</a></button>
+                              <% } %>
+                            </div>
+                          <% } %> 
+                        
                     </div> <!-- table-responsive //end -->
                 </div> <!-- card-body end// -->
             </div> <!-- card end// -->
@@ -284,6 +281,39 @@
             </div>
         </footer>
     </main>
+    <style>
+        .table-spacing th,
+        .table-spacing td {
+            padding-left: 80px; /* Adjust the value as needed for the desired spacing */
+        }
+        .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    }
+    
+    .pagination button {
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    padding: 6px 12px;
+    margin: 0 3px;
+    cursor: pointer;
+    
+    transition: background-color 0.3s, color 0.3s;
+    }
+    
+    .pagination button.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+    }
+    
+    .pagination button:hover {
+    background-color: #ddd;
+    }
+    
+    </style>
     <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
     <script src="assets/js/vendors/select2.min.js"></script>

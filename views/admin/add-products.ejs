@@ -42,7 +42,6 @@
                           <h4>Basic</h4>
                       </div>
                       <div class="card-body">
-                          
                               <div class="mb-4">
                                   <label for="product_name" class="form-label">Product title</label>
                                   <input type="text"  id="name" maxlength="50" name="name"  placeholder="Type here" class="form-control">
@@ -76,46 +75,50 @@
                                     <label class="form-label">Tax rate</label>
                                     <input type="text" name="taxrate"  placeholder="%" class="form-control" id="taxrate">
                                 </div>
+                                 </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" style="background-color: red; border-color: red;" name="color" id="inlineRadio2" value="red" checked>
+                                    <label class="form-check-label" for="inlineRadio2">Red</label>
+                                  </div>
+                               
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" style="background-color: white; border-color: black;" name="color" id="inlineRadio2" value="black"  >
+                                <label class="form-check-label" for="inlineRadio2">white</label>
                               </div>
-                              <!-- <div class="form-container">
-                                <h5>Select Available Sizes</h5>
-                                <form class="form-control" id="sizeSelectionForm">
-                                  <div>
-                                    <% for (let size = 6; size <= 11; size += 0.5) { %>
-                                      <label>
-                                        <input type="checkbox" name="size" value="<%= size %>">
-                                        <%= size %>
-                                      </label>
-                                    <% } %>
-                                  </div>
-                                </form>
-                              </div> -->
+                         
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" style="background-color: brown; border-color: brown;" name="color" id="inlineRadio2" value="Brown" >
+                                <label class="form-check-label" for="inlineRadio2">Brown</label>
+                              </div>
+                           
+
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" style="background-color: black; border-color: black;" name="color" id="inlineRadio2" value="black">
+                                <label class="form-check-label" for="inlineRadio2">Black</label>
+                              </div>
+                           
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" style="background-color: Blue; border-color: Blue;" name="color" id="inlineRadio2" value="Blue">
+                                <label class="form-check-label" for="inlineRadio2">Blue</label>
+                              </div>
+                           
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" style="background-color: Orange; border-color: Orange;" name="color" id="inlineRadio2" value="Orange">
+                                <label class="form-check-label" for="inlineRadio2">Orange</label>
+                              </div>
+                           
                               
-                              <!-- <div class="form-container">
-                                <h5>Select Available Sizes</h5>
-                                <form class="form-control" id="sizeSelectionForm">
-                                  <div>
-                                    <% for (let size = 6; size <= 11; size += 0.5) { %>
-                                      <label>
-                                        <input type="checkbox" name="size" value="<%= size %>">
-                                        <%= size %>
-                                        <input type="number" name="quantity_<%= size %>" value="1" min="1">
-                                      </label>
-                                    <% } %>
-                                  </div>
-                                </form>
-                              </div> -->
-                              
+<!--                               
                                 <script>
                                 const sizeSelectionForm = document.getElementById('sizeSelectionForm');
                                 const selectedSizesDiv = document.getElementById('selectedSizes');
                                 const selectedSizesList = document.getElementById('selectedSizesList');
-                              </script> 
+                              </script>  -->
                               <p class="text-danger" id="err-msg"></p>
                              
                               <div class="d-flex justify-content-end">
                           
-                                  <button type="submit" onclick="validate()" class="btn btn-md rounded font-sm col-lg-4 hover-up">Add product</button>
+                                  <button type="submit" onclick="validated()" class="btn btn-md rounded font-sm col-lg-4 hover-up">Add product</button>
                               </div>
                               
                           
@@ -125,135 +128,6 @@
                  <!-- card end// -->
               </div>
 
-                <!-- <div class="col-lg-6">
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h4>Basic</h4>
-                        </div>
-                        <div class="card-body">
-
-                                <div class="mb-4">
-                                    <label for="product_name" class="form-label">Product title</label>
-                                    <input type="text" name="name" placeholder="Type here" required="true" maxlength="20" class="form-control" id="product_name" onblur="removeLeadingSpaces(this)">
-                                </div>
-                                <div class="mb-4">
-                                    <label class="form-label">Full description</label>
-                                    <textarea placeholder="Type here" name="description" required="true" class="form-control"  id="product_name" onblur="removeLeadingSpaces(this)" rows="4"></textarea>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-4">
-                                        <div class="mb-4">
-                                            <label class="form-label">Regular price</label>
-                                            <input placeholder="₹" required="true" name="regularprice" type="text" class="form-control" onblur="validateInput(this)">
-                                            <span id="error-message" style="color: red;"></span>
-                                            
-                                            <script>
-                                            function validateInput(input) {
-                                              var value = parseFloat(input.value);
-                                              
-                                              if (isNaN(value) || value < 0) {
-                                                document.getElementById('error-message').textContent = 'Value must be a positive number.';
-                                                input.value = ''; // Clear the input field
-                                              } else {
-                                                document.getElementById('error-message').textContent = '';
-                                              }
-                                            }
-                                            </script>
-                                            
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-4">
-                                            <label class="form-label">Sale price</label>
-                                            <input placeholder="₹" required="true" name="saleprice" type="text" class="form-control" onblur="validateInput(this)">
-                                            <span id="error-message" style="color: red;"></span>
-                                            
-                                            <script>
-                                            function validateInput(input) {
-                                              var value = parseFloat(input.value);
-                                              
-                                              if (isNaN(value) || value < 0) {
-                                                document.getElementById('error-message').textContent = 'Value must be a positive number.';
-                                                input.value = ''; // Clear the input field
-                                              } else {
-                                                document.getElementById('error-message').textContent = '';
-                                              }
-                                            }
-                                            </script>
-                                            
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <label class="form-label">Units</label>
-                                        <input required="true" name="units" type="text" class="form-control" onblur="validateInput(this)">
-                                        <span id="error-message" style="color: red;"></span>
-                                        
-                                        <script>
-                                        function validateInput(input) {
-                                          var value = parseFloat(input.value);
-                                          
-                                          if (isNaN(value) || value < 0) {
-                                            document.getElementById('error-message').textContent = 'Value must be a positive number.';
-                                            input.value = ''; // Clear the input field
-                                          } else {
-                                            document.getElementById('error-message').textContent = '';
-                                          }
-                                        }
-                                        </script>
-                                                                            </div>
-                                </div>
-                                <div class="mb-4">
-                                  <label class="form-label">Tax rate</label>
-                                  <input type="text" name="taxrate" required="true" placeholder="%" class="form-control" id="product_name">
-                              </div>
-
-                              
-                                  <style>
-                                    label {
-                                      display: block;
-                                      float: left;
-                                      margin-right: 10px;
-                                    }
-                                
-                                    .form-container {
-                                      display: inline-block;
-                                      vertical-align: top;
-                                      width: 45%; /* Adjust as needed */
-                                    }
-                                
-                                    .form-container h5 {
-                                      margin-top: 0;
-                                    }
-                                  </style>
-                                  <script>
-                                    function removeLeadingSpaces(inputElement) {
-                                        const trimmedValue = inputElement.value.trim();
-                                        inputElement.value = trimmedValue;
-                                    }
-                                    </script>
-                                    
-                                
-                                  <div class="form-container">
-                                    <h5>Select Available Sizes</h5>
-                                    <form class="form-control" id="sizeSelectionForm">
-                                      <div>
-                                        <% for (let size = 6; size <= 11; size += 0.5) { %>
-                                          <label>
-                                            <input type="checkbox" name="size" value="<%= size %>">
-                                            <%= size %>
-                                          </label>
-                                        <% } %>
-                                      </div>
-                                    </form>
-                                  </div>
-                                    <script>
-                                    const sizeSelectionForm = document.getElementById('sizeSelectionForm');
-                                    const selectedSizesDiv = document.getElementById('selectedSizes');
-                                    const selectedSizesList = document.getElementById('selectedSizesList');
-                                  </script>  
-                        </div>
-                    </div> card end
-                </div> -->
                 <div class="col-lg-3">
                     <div class="card mb-4">
                         <div class="card-header">
@@ -263,7 +137,7 @@
                             <small style="font-weight: bold;">Upload 4 images</small>
                             <div class="input-upload">
                                 <img src="/assets/imgs/theme/upload.svg" alt="">
-                                <input class="form-control" name="image" type="file" required="true" multiple accept="image/*"
+                                <input class="form-control" name="image" type="file" multiple accept="image/*"
                                 onchange="validateImageFile(this)"> 
                             </div>
                         </div>
@@ -294,32 +168,27 @@
                 </div>
             </div>
         </form> <!-- content-main end// -->
-    
     </main>
     <script>
               function validateImageFile(input) {
-    const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i; // Allowed image file extensions
-
+    const allowedExtensions = /(\.jpg|\.jpeg|\.webp|\.png|\.gif)$/i; 
     const file = input.files[0]; // Get the selected file
-
     if (!allowedExtensions.test(file.name)) {
-        alert("oi")
         alert("Please select a valid image file (jpg, jpeg, png, gif).");
-        input.value = ""; // Clear the input field
+        input.value = ""; 
     }
 }
 
-    function validate(){
-        document.getElementById('err-msg').innerHTML = ''
+function validated(){
+     document.getElementById('err-msg').innerHTML = ''
         let name = document.getElementById('name').value;
-        const nameRegex = /^[A-Za-z0-9]{1,50}$/;
+        const nameRegex = /^[A-Za-z0-9\s'-.]+$/
 
         if(nameRegex.test(name)){
           document.getElementById('name').style.borderColor = 'white'
         }else{  
           document.getElementById('name').style.borderColor = 'red'
           document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Name error'
-          //alert("Name Eroor 1:Start with capital letter 2:No white spaces 3:No Special symbols")
           event.preventDefault()
         }
         
@@ -332,8 +201,7 @@
         }else{
           document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Regular Price error'
           document.getElementById('Rprice').style.borderColor = 'red'
-          //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
-          event.preventDefault()
+          event.preventDefault() 
         }
 
         const PpriceRegex = /^[1-9][0-9]*$/
@@ -345,7 +213,6 @@
         }else{
         document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Promotional Price error'
         document.getElementById('Pprice').style.borderColor = 'red'
-        //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
         event.preventDefault()
         }
 
@@ -357,12 +224,10 @@
         }else{
         document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> unit  error'
         document.getElementById('unit').style.borderColor = 'red'
-        //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
         event.preventDefault()
         }
 
         const descRegex = /^(?!\s*$).+/; 
-
 
         let description = document.getElementById('description').value;
         if(descRegex.test(description)){
@@ -370,7 +235,6 @@
         }else{
         document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Description  error'
         document.getElementById('description').style.borderColor = 'red'
-        //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
         event.preventDefault()
         }
   
@@ -382,11 +246,9 @@ if(unitRegex.test(tax)){
 }else{
 document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> unit  error'
 document.getElementById('taxrate').style.borderColor = 'red'
-//alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
 event.preventDefault()
 }
-        
-    }
+}
     </script>
     <script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>

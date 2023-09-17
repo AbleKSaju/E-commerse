@@ -91,7 +91,7 @@
                                     <div class="col-sm-6 offset-sm-3 text-center">
                                         <div class="slider-text-inner">
                                             <div class="desc">
-                                                <h1 class="head-1 mt-5 text-white font-weight-bold animate-from-bottom-to-top""><%= banner[i].title %></h1>
+                                                <h1 class="head-1 mt-5 text-white font-weight-bold animate-from-bottom-to-top"><%= banner[i].title %></h1>
                                                 <h2 class="head-2 animate-from-bottom-to-top"></h2>
                                                 <h2 class="head-3 text-white animate-from-bottom-to-top"><strong class="font-weight-bold">50%</strong> Off</h2>
                                                 <% const descriptionWords = banner[i].description.split(' '); %>
@@ -106,7 +106,7 @@
                                                         <h3 class="animate-from-bottom-to-top text-white"><%= remainingDescription %></h3>
                                                     </span>
                                                 </h2>
-                                                <p><a href="#" class="btn btn-primary animate-from-bottom-to-top">Shop Collection</a></p>
+                                                <p><a href="/brand/<%= banner[i].link %>" class="btn btn-primary animate-from-bottom-to-top">Shop Collection</a></p>
                                             </div>
                                         </div>
                                     </div>
@@ -158,116 +158,12 @@
     }
 
             </style>
-            
-<!-- <img src="/public/assets/imgs/subCategory/kids.jpeg" alt="">
-            <div class="breadcrumbs-two mt-5">
-                <div class="container">
-                    <div class="row">
-                        <div class="col">
-                            <%if(locals.cat){%>
-                            <%if(cat=='all'){%>
-                                <div class="breadcrumbs-img" style="background-image: url(/images/shoes\ poster.jpeg);">
-                                <%}else if(cat[0].name=='Adidas'){%>
-                                    <div class="breadcrumbs-img" style="background-image: url(/images/adidas\ poster.jpeg);">
-                                        <%}else if(cat[0].name=='Puma'){%>
-                                            <div class="breadcrumbs-img" style="background-image: url(/images/puma\ poster.jpeg);">
-                                                <%}else if(cat[0].name=='Relaxo'){%>
-                                                    <div class="breadcrumbs-img" style="background-image: url(/images/relaxo\ poster.jpeg);">
-                                                            <%}else{%>
-                                                                <div class="breadcrumbs-img" style="background-image: url(/images/cover-img-1.jpg);">
-                                                          <%}%>  
-                                                          <%}%>  
-                            <%if(locals.subCategory){%>
-                                <%if(subCategory=='Men'){%>
-                                    <div class="breadcrumbs-img" style="background-image: url(/assets/imgs/subCategory/men.jpeg);">
-                                        <%}else if(subCategory=='Women'){%>
-                                            <div class="breadcrumbs-img" style="background-image: url(/images/cover-img-1.jpg);"></div>
-                                            <%}else if(subCategory=='Kids'){%>
-                                                <div class="breadcrumbs-img" style="background-image: url(/assets/imgs/subCategory/kids.jpeg);">
-                                                    <%}%>
-                                <%}%>                                    
-                            </div>
-                            <div class="menu text-center">
-                                <p><a href="#">New Arrivals</a> <a href="#">Best Sellers</a> <a href="#">Extended Widths</a> <a href="#">Sale</a></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
+      
             <body>
                 <div class="colorlib-product">
                     <div class="container">
                         <div class="row">
-                            <div class="col-lg-3 col-xl-3">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="side border mb-1">
-                                            <h3>Brand</h3>
-                                            <ul>
-                                                <li><a href="/brand/Nike">Nike</a></li>
-                                                <hr>
-                                                <li><a href="/brand/Adidas">Adidas</a></li>
-                                                <hr>
-                                                <li><a href="/brand/Puma">Puma</a></li>
-                                                <hr>
-                                                <li><a href="/brand/Skechers">Skechers</a></li>
-                                                <hr>
-                                                <li><a href="/brand/Relaxo">Relaxo</a></li>
-                                                <hr>
-                                            </ul>
-                                        </div>
-                                        
-                                    </div>
-                                    
-                                    <div class="col-sm-12">
-                                        <div class="side border mb-1">
-                                            <h3>Style</h3>
-                                            <ul>
-                                                <li><a href="#">Slip Ons</a></li>
-                                                <li><a href="#">Boots</a></li>
-                                                <li><a href="#">Sandals</a></li>
-                                                <li><a href="#">Lace Ups</a></li>
-                                                <li><a href="#">Oxfords</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12">
-                                        <div class="side border mb-1">
-                                            <h3>Colors</h3>
-                                            <ul>
-                                                <li><a href="#">Black</a></li>
-                                                <li><a href="#">White</a></li>
-                                                <li><a href="#">Blue</a></li>
-                                                <li><a href="#">Red</a></li>
-                                                <li><a href="#">Green</a></li>
-                                                <li><a href="#">Grey</a></li>
-                                                <li><a href="#">Orange</a></li>
-                                                <li><a href="#">Cream</a></li>
-                                                <li><a href="#">Brown</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12">
-                                        <div class="side border mb-1">
-                                            <h3>Material</h3>
-                                            <ul>
-                                                <li><a href="#">Leather</a></li>
-                                                <li><a href="#">Suede</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12">
-                                        <div class="side border mb-1">
-                                            <h3>Technologies</h3>
-                                            <ul>
-                                                <li><a href="#">BioBevel</a></li>
-                                                <li><a href="#">Groove</a></li>
-                                                <li><a href="#">FlexBevel</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <%-include('../../partials/products-aside')%>
                          
                             <div class="col-lg-9 col-xl-9">
                                 <form class="input-group" action="/search">
@@ -332,14 +228,10 @@
                         </div>
                     </div>
                 </div>
-            </body>
-                            
+            </body>     
                         </div>
                         <div class="col-lg-9 col-xl-9">
                             <div class="row row-pb-md">
-                                
-
-                           
                               </div>
                     </section>
                 </div>

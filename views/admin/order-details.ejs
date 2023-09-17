@@ -29,7 +29,7 @@
             <div class="content-header">
                 <div>
                     <h2 class="content-title card-title">Order detail</h2>
-                    <p>Details for Order ID: 3453012</p>
+                    <p>Details for Order ID: <%=data[0]._id%></p>
                 </div>
             </div>
             <div class="card">
@@ -39,29 +39,67 @@
                             <span>
                                 <i class="material-icons md-calendar_today"></i> <b><%=data[0].date%></b>
                             </span> <br>
-                            <small class="text-muted">Order ID: 3453012</small>
+                            <small class="text-muted">Order ID: <%=data[0]._id%></small>
                         </div>
                         <div class="col-lg-6 col-md-6 ms-auto text-md-end">
-                            <%if(data[0].status==1){%>
-                                <a class="btn btn-primary" onclick="Delivered('<%=data[0]._id%>')" href="">Delivered</a>
-                            <%}else if(data[0].status==2){%>
-                                <style>
-                                    .btn.btn-primary.muted {
-                                      opacity: 0.5;
-                                    }
-                                  </style>
-                                  
-                                  <a class="btn btn-primary muted" href="#">Delivered Success</a>
-                            <%}else{%>
-                                <style>
-                                    .btn.btn-primary.muted {
-                                      opacity: 0.5;
-                                    }
-                                  </style>
-                                  
-                                  <a class="btn btn-primary muted" href="#">Delivered</a>
-                                <%}%>
-                            <a class="btn btn-secondary print ms-2" href="#"><i class="icon material-icons md-print"></i></a>
+                                  <%if(data[0].status==3){%>
+                                    <style>
+                                        .btn.btn-secondary.muted {
+                                          opacity: 0.5;
+                                        }
+                                      </style>
+                                      <a class="btn btn-secondary muted" href="#">Returned</a>
+                                <%}else if(data[0].status==2){%>
+                                    <style>
+                                        .btn.btn-primary.muted {
+                                          opacity: 0.5;
+                                        }
+                                      </style>
+                                      
+                                      <a class="btn btn-primary muted" href="#">Delivered Success</a>
+                               
+                                <%}else{%>
+                                    <select class="btn btn-secondary print ms-2"  onchange="location.href='/admin/changeStatus?id=<%=data[0]._id%>&status=' + this.value">
+                                        <% if (locals.data[0].status==0) { %>
+                                            <option value="0" selected>Pending</option>
+                                            <option value="-1">Cancel</option>
+                                            <option value="1">Approve</option>
+                                            <option value="4">Shipped</option>
+                                            <option value="2">Delivered</option>
+                                          <% } else if (locals.data[0].status==-1) { %>
+                                            <option value="-1" selected>Canceled</option>
+                                            <option value="0">Pending</option>
+                                            <option value="1">Approve</option>
+                                            <option value="4">Shipped</option>
+                                            <option value="2">Delivered</option>
+                                          <% } else if (locals.data[0].status==1) { %>
+                                            <option value="1" selected>Approved</option>
+                                            <option value="-1">Cancel</option>
+                                            <option value="0">Pending</option>
+                                            <option value="4">Shipped</option>
+                                            <option value="2">Delivered</option>
+                                          <% } else if (locals.data[0].status==2) { %>
+                                            <option value="2" selected>Delivered</option>
+                                            <option value="-1">Cancel</option>
+                                            <option value="0">Pending</option>
+                                            <option value="1">Approve</option>
+                                            <option value="4">Shipped</option>
+                                       
+                                          <% } else if (locals.data[0].status==4) { %>
+                                            <option value="4" selected>Shipped</option>
+                                            <option value="-1">Cancel</option>
+                                            <option value="0">Pending</option>
+                                            <option value="1">Approve</option>
+                                            <option value="2">Delivered</option>
+                                          <% } %>
+                                        <!-- <option value="0">Pending</option>
+                                        <option value="-1">Cancel</option>
+                                        <option value="1">Approve</option>
+                                        <option value="4">Shipped</option>
+                                        <option value="2">Delivered</option> -->
+                                    </select>
+                            
+                            <%}%>
                         </div>
                     </div>
                 </header> <!-- card-header end// -->
@@ -97,6 +135,10 @@
                                                Cancelled
                                                <%}else if(data[0].status==1){%>
                                                    Approved
+                                                   <%}else if(data[0].status==3){%>
+                                                    Returned
+                                                   <%}else if(data[0].status==4){%>
+                                                    Shipped
                                                    <%}else{%>
                                                     Delivered
                                                     <%}%>
@@ -155,7 +197,7 @@
                                                 <td>
                                                     <a class="itemside" href="#">
                                                         <div class="left">
-                                                            <img src="/uploads/products/<%=details[i].ProductDetails[0].image[1]%>" style="width: 10%;height: 10%;" class="img-xs" alt="">
+                                                            <img src="/uploads/products/<%=details[i].ProductDetails[0].image[1]%>" style="width: 5rem;height: 5rem;" class="img-xs" alt="">
                                                         </div>
                                                     </a>
                                                 </td>
@@ -192,6 +234,10 @@
                                                                     <span class="badge rounded-pill alert-danger text-danger">cancelled </span>
                                                                     <%}else if(data[0].status==1){%>
                                                                         <span class="badge rounded-pill alert-success text-success">Approved</span>
+                                                                        <%}else if(data[0].status==3){%>
+                                                                            <span class="badge rounded-pill alert-secondary text-secondary">Returned</span>
+                                                                         <%}else if(data[0].status==4){%>
+                                                                            <span class="badge rounded-pill alert-primary text-primary">Shipped</span>
                                                                          <%}else{%></span>
                                                                             <span class="badge rounded-pill alert-success text-success">Delivered</span>
                                                                             <%}%>
@@ -214,13 +260,14 @@
                                     Phone: +1 (800) 555-154-52
                                 </p>
                             </div>
+                            <%if(data[0].reason){%>
                             <div class="h-25 pt-4">
                                 <div class="mb-3">
-                                    <label>Notes</label>
-                                    <textarea class="form-control" name="notes" id="notes" placeholder="Type some note"></textarea>
+                                    <b>Reason</b>
+                                    <h3><%=data[0].reason%></h3>
                                 </div>
-                                <button class="btn btn-primary">Save note</button>
                             </div>
+                            <%}%>
                         </div> <!-- col// -->
                     </div>
                 </div> <!-- card-body end// -->
@@ -234,9 +281,11 @@
     <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
     <!-- Main Script -->
     <script src="assets/js/main.js" type="text/javascript"></script>
+    
 </body>
 
 <script>
+
 function Delivered(id){
     $.ajax({
 url: '/admin/delivered',

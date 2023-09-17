@@ -26,6 +26,10 @@ const orderModal=mongoose.Schema({
         require:true,
         type:Array
     },
+    reason:{
+        type:String,
+        default:0
+    },
     userId:{
         require:true,
         type:String

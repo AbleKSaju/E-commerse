@@ -22,15 +22,12 @@
 <body>
     <div class="screen-overlay"></div>
     <%-include('../../partials/admin-header')%>
-    <!-- <main class="main-wrap">
+    <main class="main-wrap">
         <section class="content-main">
             <div class="content-header">
                 <div>
                     <h2 class="content-title card-title">Dashboard </h2>
                     <p>Whole data about your business here</p>
-                </div>
-                <div>
-                    <a href="#" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Create report</a>
                 </div>
             </div>
             <div class="row">
@@ -40,7 +37,7 @@
                             <span class="icon icon-sm rounded-circle bg-primary-light"><i class="text-primary material-icons md-monetization_on"></i></span>
                             <div class="text">
                                 <h6 class="mb-1 card-title">Revenue</h6>
-                                <span>$13,456.5</span>
+                                <span id="Revenue">0</span>
                                 <span class="text-sm">
                                     Shipping fees are not included
                                 </span>
@@ -53,7 +50,7 @@
                         <article class="icontext">
                             <span class="icon icon-sm rounded-circle bg-success-light"><i class="text-success material-icons md-local_shipping"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Orders</h6> <span>53.668</span>
+                                <h6 class="mb-1 card-title">Orders</h6> <span id="Orders">0</span>
                                 <span class="text-sm">
                                     Excluding orders in transit
                                 </span>
@@ -66,15 +63,15 @@
                         <article class="icontext">
                             <span class="icon icon-sm rounded-circle bg-warning-light"><i class="text-warning material-icons md-qr_code"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Products</h6> <span>9.856</span>
+                                <h6 class="mb-1 card-title">Products</h6> <span id="Products">0</span>
                                 <span class="text-sm">
-                                    In 19 Categories
+                                    All Ordered Products
                                 </span>
                             </div>
                         </article>
                     </div>
                 </div>
-                <div class="col-lg-3">
+                <!-- <div class="col-lg-3">
                     <div class="card card-body mb-4">
                         <article class="icontext">
                             <span class="icon icon-sm rounded-circle bg-info-light"><i class="text-info material-icons md-shopping_basket"></i></span>
@@ -86,9 +83,30 @@
                             </div>
                         </article>
                     </div>
-                </div>
+                </div> -->
             </div>
-            <div class="row">
+            <div class="col-xl-12 col-lg-12">
+                <div class="row mt-4">
+                  <div class="col-md-9">
+                    <canvas id="lineChart"></canvas>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="card">
+                      <div class="card-body">
+                        <h5 class="card-title">Statistics</h5>
+                        <p class="card-text">Total Revenue: <span id="revenue">Loading...</span></p>
+                        <p class="card-text">Order Count: <span id="ordercount">Loading...</span></p>
+                        <p class="card-text">Product Sales: <span id="productsales">Loading...</span></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- <script>
+                var revenue= document.getElementById('revenue').innerText
+                alert(revenue)
+              </script> -->
+            <!-- <div class="row">
                 <div class="col-xl-8 col-lg-12">
                     <div class="card mb-4">
                         <article class="card-body">
@@ -261,8 +279,8 @@
                         </article>
                     </div>
                 </div>
-            </div>
-            <div class="card mb-4">
+            </div> -->
+            <!-- <div class="card mb-4">
                 <header class="card-header">
                     <h4 class="card-title">Latest orders</h4>
                     <div class="row align-items-center">
@@ -489,9 +507,78 @@
                     </ul>
                 </nav>
             </div>
-        </section> 
-   
-    </main> -->
+        </section>  -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+
+            // var revenue= document.getElementById('totalrevenue').value
+            // alert(revenue)
+            // document.getElementById('Revenue').innerHTML=revenue
+
+    
+            var ctxL = document.getElementById("lineChart").getContext('2d');
+            var myLineChart;
+            async function fetchMonthlyData() {
+              try {
+                const response = await fetch('/admin/monthly-report'); // Replace with your actual endpoint
+                const data = await response.json();
+                const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                // Initialize arrays for revenue and order count data for all months
+                const allMonthsRevenue = Array.from({ length: 12 }, () => 0);
+                const allMonthsOrderCount = Array.from({ length: 12 }, () => 0);
+    
+                // Update data arrays with fetched data
+                data.labels.forEach((label, index) => {
+                  const monthIndex = months.indexOf(label);
+                  if (monthIndex !== -1) {
+                    allMonthsRevenue[monthIndex] = data.revenueData[index];
+                    allMonthsOrderCount[monthIndex] = data.orderCountData[index];
+    
+                  }
+                });
+                const element = document.getElementById('revenue')
+                const revenue = data.revenueData[0]
+                element.textContent = revenue
+                const element1 = document.getElementById('ordercount')
+                const ordercount = data.orderCountData[0]
+                element1.textContent = ordercount
+                const element2 = document.getElementById('productsales')
+                const productsaled = data.productCountData[0]
+                element2.textContent = productsaled
+                document.getElementById('Revenue').innerText="₹ "+element.innerHTML
+                document.getElementById('Orders').innerText=element1.innerHTML
+                document.getElementById('Products').innerText=element2.innerHTML
+    
+                myLineChart = new Chart(ctxL, {
+                  type: 'line',
+                  data: {
+                    labels: months,
+                    datasets: [{
+                      label: "Total Revenue",
+                      data: allMonthsRevenue,
+                      backgroundColor: 'rgba(105, 0, 132, .2)',
+                      borderColor: 'rgba(200, 99, 132, .7)',
+                      borderWidth: 2
+                    },
+                    {
+                      label: "Order Count",
+                      data: allMonthsOrderCount,
+                      backgroundColor: 'rgba(0, 137, 132, .2)',
+                      borderColor: 'rgba(0, 10, 130, .7)',
+                      borderWidth: 2
+                    }]
+                  },
+                  options: {
+                    responsive: true
+                  }
+                });
+              } catch (error) {
+                console.error(error);
+              }
+            }
+            fetchMonthlyData();
+            </script>
+    </main>
     <script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
     <script src="/assets/js/vendors/select2.min.js"></script>

@@ -1,0 +1,231 @@
+
+<script src="//cdn.tutorialjinni.com/jquery/3.6.1/jquery.min.js"></script>
+<script src="//cdn.tutorialjinni.com/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="//cdn.tutorialjinni.com/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+<script src="//g.tutorialjinni.com/mojoaxel/bootstrap-select-country/dist/js/bootstrap-select-country.min.js"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+
+<div class="container mt-5">
+    <div class="row justify-content-center"> <!-- Center the row horizontally -->
+        <div class="col-md-8 mb-4">
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h5 class="mb-0">Add new Address</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="/editAddress">
+                        <input type="hidden" class="forms-control name" name="id" value="<%=id%>"/>
+
+                       <div class="form-outline mb-4">
+                        <input type="text" class="forms-control name" id="name" name="name" value="<%=address.name%>" placeholder="Full Name" />
+                      </div>
+            <div class="row mb-4">
+                <div class="col">
+                  <div class="form-outline">
+                    <input id="number" val  type="number" class="forms-control number" name="number" value="<%=address.number%>" placeholder="Mobile Number" >
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-outline">
+                
+                     <input id="altnumber"  type="number" class="forms-control altnumber" name="altNumber" value="<%=address.altNumber%>" placeholder="Alternative Number">
+                  </div>
+                </div>
+              </div>
+    <style>
+.forms-control {
+display: block;
+width: 100%;
+padding: 0.375rem 0.75rem;
+font-size: 1rem;
+line-height: 1.5;
+color: #495057;
+background-color: #fff;
+background-clip: padding-box;
+border: 1px solid #ced4da;
+border-radius: 0.25rem;
+transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+    </style>
+              <!-- Text input -->
+              <div class="form-outline mb-4">
+                <input id="pincode" type="number" class="forms-control pincode" name="pinCode" value="<%=address.pinCode%>" placeholder="Pin code">
+              </div>
+    
+              <!-- Text input -->
+              <div class="form-outline mb-4">
+                <input id="house"   type="text"  class="forms-control" name="house" value="<%=address.house%>" placeholder="Flat, House no., Building, Company, Apartment">
+              </div>
+    
+              <!-- Email input -->
+              <div class="form-outline mb-4">
+                <input id="area"   type="text"  class="forms-control" name="area" value="<%=address.area%>" placeholder="Area, Street, Sector, Village">
+              </div>
+    
+              <!-- Number input -->
+              <div class="form-outline mb-4">
+                <input id="landmark"   type="text"  class="forms-control landmark" name="landmark" value="<%=address.landmark%>" placeholder="Landmark">
+              </div>
+    
+              <!-- Message input -->
+              <div class="form-outline mb-4">
+                <input id="town"   type="text"  class="forms-control" name="town" value="<%=address.town%>" placeholder="Town/city">
+              </div>
+    
+              <!-- Checkbox -->
+              <div class="form-outline mb-4">
+                 <input id="state"   type="text"  class="forms-control town" name="state" value="<%=address.state%>" placeholder="State">
+                </label>
+              </div>
+              <div class="form-group">
+                <p class="text-danger" id="err-msg"></p>
+                <button type="submit" onclick="validate()" class="btn btn-primary btn-lg">COUNTINUE</button>
+           
+            </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+  function validate(){
+      document.getElementById('err-msg').innerHTML = ''
+      let name = document.getElementById('name').value;
+      // const nameRegex = /^[A-Za-z0-9]{1,50}$/;
+      const nameRegex = /^[A-Za-z][A-Za-z\s'-]+$/
+;
+
+      if(nameRegex.test(name)){
+          document.getElementById('name').style.borderColor = 'white'
+      }else{  
+        document.getElementById('name').style.borderColor = 'red'
+        document.getElementById('name').style.borderWidth = '1px'
+        document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Name error'
+        event.preventDefault()
+      }
+      
+      const numberRegex =/^\d{10}$/
+
+
+      let number = document.getElementById('number').value;
+      if(numberRegex.test(number)){
+          document.getElementById('number').style.borderColor = 'white'
+      }else{
+        document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Number  error'
+        document.getElementById('number').style.borderColor = 'red'
+        document.getElementById('number').style.borderWidth = '1px'
+        //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
+        event.preventDefault()
+      }
+
+      const altnumberRegex = /^\d{10}$/
+      let altnumber = document.getElementById('altnumber').value;
+      if(altnumberRegex.test(altnumber)){
+          document.getElementById('altnumber').style.borderColor = 'white'
+      }else{
+      document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Alt Number error'
+      document.getElementById('altnumber').style.borderColor = 'red'
+      document.getElementById('altnumber').style.borderWidth = '1px'
+      event.preventDefault()
+      }
+
+      const pincodeRegex =/^(\d{6}|68\d{4})$/
+
+
+      let pincode = document.getElementById('pincode').value
+      if(pincodeRegex.test(pincode)){
+          document.getElementById('pincode').style.borderColor = 'white'
+      }else{
+      document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Pincode  error'
+      document.getElementById('pincode').style.borderColor = 'red'
+      document.getElementById('pincode').style.borderWidth = '1px'
+      event.preventDefault()
+      }
+      
+
+      const houseRegex = /[\dA-Za-z\s,'.-]+/
+
+
+
+      let house = document.getElementById('house').value;
+      if(houseRegex.test(house)){
+          document.getElementById('house').style.borderColor = 'white'
+      }else{
+      document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> House field  error'
+      document.getElementById('house').style.borderColor = 'red'
+      document.getElementById('house').style.borderWidth = '1px'
+      //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
+      event.preventDefault()
+      }
+
+      const areaRegex =/\b[A-Za-z0-9\s()]+\b/
+
+
+
+      let area = document.getElementById('area').value;
+      if(areaRegex.test(area)){
+          document.getElementById('area').style.borderColor = 'white'
+      }else{
+      document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Area field  error'
+      document.getElementById('area').style.borderColor = 'red'
+      document.getElementById('area').style.borderWidth = '1px'
+      //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
+      event.preventDefault()
+      }
+
+      const landmarkRegex =/^[A-Za-z0-9]{1,50}$/
+
+
+
+let landmark= document.getElementById('landmark').value;
+if(areaRegex.test(landmark)){
+  document.getElementById('landmark').style.borderColor = 'white'
+}else{
+document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Area field  error'
+document.getElementById('landmark').style.borderColor = 'red'
+document.getElementById('landmark').style.borderWidth = '1px'
+//alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
+event.preventDefault()
+}
+
+
+      const townRegex = /^[A-Za-z0-9]{1,50}$/
+
+
+
+      let town = document.getElementById('town').value;
+      if(townRegex.test(town)){
+          document.getElementById('town').style.borderColor = 'white'
+      }else{
+      document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Town field  error'
+      document.getElementById('town').style.borderColor = 'red'
+      document.getElementById('town').style.borderWidth = '1px'
+      //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
+      event.preventDefault()
+      }
+
+      const stateRegex = /^[A-Za-z0-9]{1,50}$/
+
+
+
+      let state = document.getElementById('state').value;
+      if(stateRegex.test(state)){
+          document.getElementById('state').style.borderColor = 'white'
+      }else{
+      document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> state field  error'
+      document.getElementById('state').style.borderColor = 'red'
+      document.getElementById('state').style.borderWidth = '1px'
+      //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
+      event.preventDefault()
+      }
+      
+  }
+</script>
+<%-include('../../partials/user-footer')%>
+<script src="js/main.js"></script>
+<script src="//cdn.tutorialjinni.com/jquery/3.6.1/jquery.min.js"></script>
+<script src="//cdn.tutorialjinni.com/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="//cdn.tutorialjinni.com/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+<script src="//g.tutorialjinni.com/mojoaxel/bootstrap-select-country/dist/js/bootstrap-select-country.min.js"></script>

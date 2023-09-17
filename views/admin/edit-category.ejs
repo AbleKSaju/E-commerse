@@ -119,7 +119,7 @@
         function validate(){
             document.getElementById('err-msg').innerHTML = ''
             let name = document.getElementById('name').value;
-            const nameRegex = /^[A-Za-z0-9]{1,50}$/;
+            const nameRegex =/^[a-zA-Z0-9\s'’-.,!&()]+$/u;
     
             if(nameRegex.test(name)){
                 document.getElementById('name').style.borderColor = 'white'

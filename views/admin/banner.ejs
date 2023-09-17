@@ -29,8 +29,8 @@
                     <h2 class="content-title card-title">Banner Management </h2>
                 </div>
                 <div>
-                    <a href="#" class="btn btn-light rounded font-md">Export</a>
-                    <a href="#" class="btn btn-light rounded  font-md">Import</a>
+                    <!-- <a href="#" class="btn btn-light rounded font-md">Export</a>
+                    <a href="#" class="btn btn-light rounded  font-md">Import</a> -->
                     <a href="/admin/addBanner" class="btn btn-primary btn-sm rounded">Create new</a>
                 </div>
             </div>
@@ -74,36 +74,56 @@
                     </tr>
                     <% } %>
                 </table>
-                
-            </div>
-            
-            <div class="pagination-area mt-30 mb-50">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-start">
-                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                        <li class="page-item"><a class="page-link" href="#">02</a></li>
-                        <li class="page-item"><a class="page-link" href="#">03</a></li>
-                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">16</a></li>
-                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
-                    </ul>
-                </nav>
+                     <% if (totalpages) { %>
+                <div class="pagination">
+                  <% if (currentpage > 1) { %>
+                    <button><a href="?page=<%= currentpage - 1 %>">Previous</a></button>
+                  <% } %>
+              
+                  <% for (let i = 1; i <= totalpages; i++) { %> <!-- Change the loop to start from 1 and go up to totalpages -->
+                    <button><a href="?page=<%= i %>" class="<%= i === currentpage ? 'active' : '' %>"><%= i %></a></button>
+                  <% } %>
+              
+                  <% if (currentpage < totalpages) { %>
+                    <button><a href="?page=<%= currentpage + 1 %>">Next</a></button>
+                  <% } %>
+                </div>
+              <% } %> 
             </div>
         </section> <!-- content-main end// -->
-        <footer class="main-footer font-xs">
-            <div class="row pb-30 pt-15">
-                <div class="col-sm-6">
-                    <script>
-                    document.write(new Date().getFullYear())
-                    </script> ©, Evara - HTML Ecommerce Template .
-                </div>
-                <div class="col-sm-6">
-                    <div class="text-sm-end">
-                        All rights reserved
-                    </div>
-                </div>
-            </div>
-        </footer>
+        <style>
+            .table-spacing th,
+            .table-spacing td {
+                padding-left: 80px; /* Adjust the value as needed for the desired spacing */
+            }
+            .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        }
+        
+        .pagination button {
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+        padding: 6px 12px;
+        margin: 0 3px;
+        cursor: pointer;
+        
+        transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .pagination button.active {
+        background-color: #007bff;
+        color: #fff;
+        border-color: #007bff;
+        }
+        
+        .pagination button:hover {
+        background-color: #ddd;
+        }
+        
+        </style>
     </main>
     <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>

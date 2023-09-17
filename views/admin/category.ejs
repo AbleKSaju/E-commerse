@@ -37,8 +37,8 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3">
-                            <%if(already==true){%>
-                                <p id="exist" class="text-danger">Category Already Exist</p>
+                            <%if(locals.Already){%>
+                                <p id="exist" class="text-danger"><%=Already%></p>
                                 <%}%>
                             <form method="post" action="/admin/admin-category" enctype="multipart/form-data">
                                 <div class="mb-4">
@@ -92,9 +92,7 @@
                                             <td> <a href="">
                                                 <button class="badge rounded-pill alert-danger inactive-badge">Inactive</button>
                                             </a></td>
-                                            <%}%>
-
-                                   
+                                            <%}%>                                   
                                             <td class="text-end">
                                                 <div class="dropdown">
                                                     <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
@@ -109,12 +107,14 @@
                                                             onclick="return confirm('are you sure to Delete <%= user.name %> ?')"
                                                          >Delete</a>
                                                          <%if(user.verified==0){%>
-                                                         <a href="/admin/unlist-category/<%= user._id %>"
+                                                            <a href="/admin/unlist-category?userId=<%= encodeURIComponent(user._id) %>&cat=<%= encodeURIComponent(user.name) %>"
+
                                                            class="btn btn-outline-danger "
                                                            onclick="return confirm('Are you sure to Unlist <%= user.name %> ?')"
                                                         >Unlist</a>
                                                         <%} else {%>
-                                                            <a href="/admin/list-category/<%= user._id %>"
+                                                            <a href="/admin/list-category?userId=<%= encodeURIComponent(user._id) %>&cat=<%= encodeURIComponent(user.name) %>"
+
                                                                 class="btn btn-outline-success "
                                                              >List</a>
                                                             <%}%>
@@ -126,12 +126,60 @@
                                         <% }); %>
                                     </tbody>
                                 </table>
+                                <% if (totalpages) { %>
+                                    <div class="pagination">
+                                      <% if (currentpage > 1) { %>
+                                        <button><a href="?page=<%= currentpage - 1 %>">Previous</a></button>
+                                      <% } %>
+                                  
+                                      <% for (let i = 1; i <= totalpages; i++) { %> <!-- Change the loop to start from 1 and go up to totalpages -->
+                                        <button><a href="?page=<%= i %>" class="<%= i === currentpage ? 'active' : '' %>"><%= i %></a></button>
+                                      <% } %>
+                                  
+                                      <% if (currentpage < totalpages) { %>
+                                        <button><a href="?page=<%= currentpage + 1 %>">Next</a></button>
+                                      <% } %>
+                                    </div>
+                                  <% } %> 
                             </div>
                         </div> <!-- .col// -->
                     </div> <!-- .row // -->
                 </div> <!-- card body .// -->
             </div> <!-- card .// -->
         </section> <!-- content-main end// -->
+        <style>
+            .table-spacing th,
+            .table-spacing td {
+                padding-left: 80px; /* Adjust the value as needed for the desired spacing */
+            }
+            .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        }
+        
+        .pagination button {
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+        padding: 6px 12px;
+        margin: 0 3px;
+        cursor: pointer;
+        
+        transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .pagination button.active {
+        background-color: #007bff;
+        color: #fff;
+        border-color: #007bff;
+        }
+        
+        .pagination button:hover {
+        background-color: #ddd;
+        }
+        
+        </style>
     </main>
     <script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
@@ -162,7 +210,7 @@
         function validate(){
             document.getElementById('err-msg').innerHTML = ''
             let name = document.getElementById('name').value;
-            const nameRegex = /^[A-Za-z0-9]{1,50}$/;
+            const nameRegex = /^[A-Za-z0-9\s'-.]+$/
     
             if(nameRegex.test(name)){
                 document.getElementById('name').style.borderColor = 'white'

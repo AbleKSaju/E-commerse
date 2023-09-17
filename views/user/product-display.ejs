@@ -110,8 +110,7 @@
                           </a>
                         <% } %>
                       </div>
-                    </aside>
-              
+                    </aside> 
                     <main class="col-lg-6">
                       <div class="ps-lg-3">
                         <form id="myForm" action="/buy/<%= data[0]._id %>" method="post">
@@ -168,7 +167,7 @@
                 </h2>
                 
                 <div class="row">
-                  <% for (let i = Math.min(products.length, 4); i >0 ; i--) { %>
+                  <% for (let i = products.length-1; i >products.length-5 ; i--) { %>
                     <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
                       <div class="product-entry border">
                         <a href="/product-display?id=<%= products[i]._id %>" class="img-wrap PROD-IMG">

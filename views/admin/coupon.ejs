@@ -1,0 +1,218 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-categories.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:21 GMT -->
+<head>
+    <meta charset="utf-8">
+    <title>Stepz Dashboard</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/assets/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link href="/assets/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div class="screen-overlay"></div>
+    <%-include('../../partials/admin-header')%>
+    <main class="main-wrap">
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Coupon </h2>
+                    <p>Add, edit or delete a Coupon</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <%if(locals.err){%>
+                                <p id="exist" class="text-danger"><%=err%></p>
+                                <%}%>
+                            <form method="post" action="/admin/coupon">
+                                <div class="mb-4">
+                                      <br>
+                                    <label for="product_name"  class="form-label">Name</label>
+                                    <input type="text" name="name" placeholder="Type here" maxlength="20" class="form-control" id="name" /><br>
+                                    <label for="product_name"  class="form-label">Start Date</label>
+                                    <input type="date" name="startDate" class="form-control" required="true" id="startingDate" /><br>
+                                    <label for="product_name"  class="form-label" onchange="validates()">End Date</label>
+                                    <input type="date" name="endDate" class="form-control" id="exipiringDate" required="true"/><br>
+                                    <label for="product_name"  class="form-label" onchange="validates()">Offer Price</label>
+                                    <input type="text" name="offerPrice" placeholder="Type here" maxlength="20" class="form-control" id="offerPrice" /><br>
+                                    <label for="product_name"  class="form-label">Minimum Price</label>
+                                    <input type="text" name="minimumPrice" placeholder="Type here" maxlength="20" class="form-control" id="minimumPrice" /><br>
+                                </div>
+
+                                <!-- <p id="msg" class="text-danger"></p> -->
+                                <p id="err-msg" class="text-danger"></p>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" type="submit" onclick="validate()">Create Coupon</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>                                  
+                                            <th>Name</th>
+                                            <th>CreatedOn</th>
+                                            <th>expiry</th>
+                                            <th>offerPrice</th>
+                                            <th>minimumPrice</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <%if(locals.data){%>
+                                        <% data.forEach(function(coupon) { %>
+                                        <tr>
+                                            <td><b><%= coupon.name %></b></td>
+                                            <td><%= coupon.created %></td>
+                                            <td><%= coupon.expiry %></td>
+                                            <td><%= coupon.offerPrice %></td>
+                                            <td><%= coupon.minimumPrice %></td>
+                                            <% if (coupon.status == 1) { %>
+                                                <td>
+                                                  <button onclick="couponStatus('<%= coupon._id %>', -1)" class="btn btn-outline-success">Listed</button>
+                                                  <span id="status_<%= coupon._id %>"></span>
+                                                </td>
+                                              <% } else if (coupon.status == -1) { %>
+                                                <td>
+                                                  <button onclick="couponStatus('<%= coupon._id %>', 1)" class="btn btn-outline-danger">Unlisted</button>
+                                                  <span id="status_<%= coupon._id %>"></span>
+                                                </td>
+                                              <% } else { %>
+                                                <td>
+                                                  <button class="btn btn-warning">Expired</button>
+                                                  <span id="status_<%= coupon._id %>">Expired</span>
+                                                </td>
+                                              <% } %>
+                                              
+                                            <%})%>
+                                        <%}%>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> <!-- .col// -->
+                    </div> <!-- .row // -->
+                </div> <!-- card body .// -->
+            </div> <!-- card .// -->
+        </section> <!-- content-main end// -->
+    </main>
+    <script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/vendors/select2.min.js"></script>
+    <script src="/assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+
+    <script>
+
+        function couponStatus(id,status){
+            $.ajax({
+                url:'/admin/couponStatus',
+                method:"post",
+                data:{
+                    id,
+                    status
+                },
+                success:(status)=>{
+                    if(status==true){
+                        location.reload()
+                    }else{
+                        alert("Something Fishy")
+                    }
+                }
+            })
+        }
+
+const startingDateInput = document.getElementById("startingDate");
+    const todayDate = new Date().toISOString().slice(0, 10);
+    document.getElementById('startingDate').value = todayDate
+    const todayDateObj = new Date(todayDate)
+    function validates(){
+        alert("ent")
+        // document.getElementById('msg').innerHTML = ''
+        const sDate = document.getElementById('startingDate').value
+        const eDate = document.getElementById('exipiringDate').value
+        const sDateObj = new Date(sDate);
+        const eDateObj = new Date(eDate)
+        if (sDateObj > eDateObj){
+            document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Expiry date Error'
+            event.preventDefault()
+        }
+        if(sDateObj<todayDateObj){
+            document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Starting date should be above todays date'
+            event.preventDefault()
+        }
+    }
+
+       setTimeout(() => {
+        document.getElementById('exist').style.display='none'
+       }, 5000);
+    </script>
+    <!-- Main Script -->
+    <script src="/assets/js/main.js" type="text/javascript"></script>
+
+    <script>
+        function validate(){
+            document.getElementById('err-msg').innerHTML = ''
+            let name = document.getElementById('name').value;
+            const nameRegex = /^[A-Za-z0-9]{1,50}$/;
+    
+            if(nameRegex.test(name)){
+                document.getElementById('name').style.borderColor = 'white'
+            }else{  
+              document.getElementById('name').style.borderColor = 'red'
+              document.getElementById('name').style.borderWidth = '1px'
+              document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Name error'
+              //alert("Name Eroor 1:Start with capital letter 2:No white spaces 3:No Special symbols")
+              event.preventDefault()
+            }
+            const offerPriceRegex =  /^[1-9][0-9]*$/; 
+    
+    
+    let description = document.getElementById('offerPrice').value;
+    if(offerPriceRegex.test(description)){
+        document.getElementById('offerPrice').style.borderColor = 'white'
+    }else{
+    document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Offer Price  error'
+    document.getElementById('offerPrice').style.borderColor = 'red'
+    document.getElementById('offerPrice').style.borderWidth = '1px'
+    //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
+    event.preventDefault()
+    }
+
+    const ominimumRegex =  /^[1-9][0-9]*$/; 
+    
+    
+    let minimumPrice = document.getElementById('offerPrice').value;
+    if(offerPriceRegex.test(minimumPrice)){
+        document.getElementById('minimumPrice').style.borderColor = 'white'
+    }else{
+    document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> minimumPrice error'
+    document.getElementById('minimumPrice').style.borderColor = 'red'
+    document.getElementById('minimumPrice').style.borderWidth = '1px'
+    //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
+    event.preventDefault()
+    }
+
+}
+
+      </script>
+    
+</body>
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-categories.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:21 GMT -->
+</html>

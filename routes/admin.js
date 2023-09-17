@@ -3,20 +3,26 @@ const router = express.Router();
 const crop = require("../middlewares/crop");
 const adminController = require("../controller/admin-contoller");
 const salesController = require("../controller/sales-controller")
+const bannerController = require("../controller/banner-controller")
+const couponController = require("../controller/coupon-controller")
 const bannerModel = require("../model/banner-model")
 const order = require("../model/order-model");
 const sharp = require("sharp");
 const multers = require("../multer/multers");
 const product = require("../model/products-model");
 const user = require("../model/user-model");
+const coupon = require("../model/coupon-model")
 const { log } = require("debug/src/browser");
 const mongodb = require("mongodb");
-const { cancelOrder, logOut } = require("../controller/user-controller");
+const moment = require("moment");
+const async = require("hbs/lib/async");
 const update = multers.update;
 const upload = multers.upload;
 const banner = multers.banner;
 
 router.get("/", adminController.adminIndex);
+
+router.get('/monthly-report',adminController.graph)
 
 router.get("/admin-login", adminController.adminLoggin);
 
@@ -37,9 +43,9 @@ router.get("/edit-category/:id", adminController.editCategoryPage);
 
 router.post("/edit-category",upload.single("image"),adminController.editCategory);
 
-router.get("/unlist-category/:id", adminController.unlistCategory);
+router.get("/unlist-category", adminController.unlistCategory);
 
-router.get("/list-category/:id", adminController.listCategory);
+router.get("/list-category", adminController.listCategory);
 
 
 //PRODUCTS
@@ -74,16 +80,19 @@ router.get("/unblock/:id", adminController.unblockUser);
 
 router.get("/admin-orders", adminController.orders);
 
-router.post("/cancelOrder", adminController.cancelOrder);
+// router.post("/cancelOrder", adminController.cancelOrder);
 
-router.post("/makeOrder", adminController.makeOrder);
+// router.post("/makeOrder", adminController.makeOrder);
 
-router.post("/approved", adminController.approved);
+// router.post("/approved", adminController.approved);
 
 router.get("/details", adminController.orderDetails);
 
 router.post("/delivered", adminController.delivered);
 
+router.get('/orderStatus',adminController.orderStatus)
+
+router.get('/changeStatus',adminController.changeStatus)
 
 // SALES
 
@@ -97,86 +106,33 @@ router.get('/salesMonthly',salesController.salesMonthly )
 
 router.get('/salesYearly',salesController.salesYearly)
 
-router.get("/admin-logout", adminController.logOut);
+
+// BANNER
+
+router.get('/bannerManagement',bannerController.bannerPage)
+
+router.get('/addBanner',bannerController.addBanner)
+
+router.post('/add-banner',banner.single("image"),crop.bannerCrop,bannerController.bannerAdded)
+
+router.get('/editBanner/:id',bannerController.editBanner)
+
+router.post('/editBanner',banner.single("image"),bannerController.bannerEdited);
+
+router.get('/deleteBanner/:id',bannerController.deleteBanner)
 
 
+    //COUPON
 
-router.get('/bannerManagement',async(req,res)=>{
-    bannerModel.find().lean()
-    .then((data)=>{
-        console.log(data);
-        res.render('admin/banner',{data})
-    })
-})
+router.get('/coupon',couponController.coupons)
 
-router.get('/addBanner',(req,res)=>{
-    res.render('admin/add-banner')
-})
+router.post('/coupon',couponController.couponAdded)
 
-router.post('/add-banner',banner.single("image"),crop.bannerCrop,(req,res)=>{
-    const currentDate = new Date();
-    const [year, month, day] = [
-      currentDate.getFullYear(),
-      (currentDate.getMonth() + 1).toString().padStart(2, "0"),
-      currentDate.getDate().toString().padStart(2, "0"),
-    ];
-    var date = `${day} / ${month} / ${year}`;
-    var newBanner=new bannerModel({
-        title:req.body.name,
-        description:req.body.description,
-        location:req.body.location,
-        link:req.body.link,
-        image:req.file.filename,
-        date:date
-    })
-    newBanner.save()
-    res.redirect('/admin/bannerManagement')
-})
-
-router.get('/editBanner/:id',async (req,res)=>{
-    console.log(req.params.id)
-    await bannerModel.findOne({_id:req.params.id}).lean()
-    .then((data)=>{
-        console.log(data);
-        res.render('admin/edit-banner',{data})
-    })
-})
-router.post('/editBanner',banner.single("image"),(req, res, next) => {
-    const currentDate = new Date();
-    const [year, month, day] = [
-        currentDate.getFullYear(),
-        (currentDate.getMonth() + 1).toString().padStart(2, "0"),
-        currentDate.getDate().toString().padStart(2, "0"),
-    ];
-    const date = `${day} / ${month} / ${year}`;
-    const updateFields = {
-        title: req.body.name,
-        description: req.body.description,
-        location: req.body.location,
-        link: req.body.link,
-        date: date
-    };
-    if (req.file) {
-        crop.bannerCrop(req, res, () => {
-            updateFields.image = req.file.filename;
-            proceedWithUpdate();
-        });
-    } else {
-        proceedWithUpdate();
-    }
-    async function proceedWithUpdate() {
-        await bannerModel.findByIdAndUpdate(req.query.id, updateFields);
-        res.redirect('/admin/bannerManagement');
-    }
-});
+router.post("/couponStatus",couponController.couponStatus)
 
 
-router.get('/deleteBanner/:id',async(req,res)=>{
-    console.log(req.params.id);
-    await bannerModel.findByIdAndRemove(req.params.id)
-    .then((data)=>{
-        res.redirect('/admin/bannerManagement')
-    })
-})
+    //LOGOUT
+
+router.get("/admin-logout", adminController.logOut)
 
 module.exports = router;

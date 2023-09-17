@@ -28,6 +28,10 @@ const productModal=mongoose.Schema({
         type:String,
         require:true
     },
+    color:{
+        type:String,
+        require:true
+    },
     createdon:{
         type:Date,
         require:true
@@ -37,13 +41,16 @@ const productModal=mongoose.Schema({
         require:true
     },
     units:{
-        type:String,
+        type:Number,
         require:true
     },
     verified:{
         type:String,
         default:0
-
+    },
+    isListed:{
+        type:String,
+        default:0
     }
 })
 

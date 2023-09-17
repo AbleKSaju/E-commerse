@@ -160,6 +160,40 @@
                                         </div>
                                     </div>
                                 </div>
+            
+                                 <h5> Default Color: <h4 style="color: black;"><%=data.color%></h4></h5> 
+                                  <br>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" style="background-color: red; border-color: red;" name="color" id="inlineRadio2" value="red">
+                                    <label class="form-check-label" for="inlineRadio2">Red</label>
+                                  </div>
+                               
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" style="background-color: white; border-color: black;" name="color" id="inlineRadio2" value="White"  >
+                                <label class="form-check-label" for="inlineRadio2">white</label>
+                              </div>
+                         
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" style="background-color: brown; border-color: brown;" name="color" id="inlineRadio2" value="Brown" >
+                                <label class="form-check-label" for="inlineRadio2">Brown</label>
+                              </div>
+                           
+
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" style="background-color: black; border-color: black;" name="color" id="inlineRadio2" value="black">
+                                <label class="form-check-label" for="inlineRadio2">Black</label>
+                              </div>
+                           
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" style="background-color: Blue; border-color: Blue;" name="color" id="inlineRadio2" value="Blue">
+                                <label class="form-check-label" for="inlineRadio2">Blue</label>
+                              </div>
+                           
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" style="background-color: Orange; border-color: Orange;" name="color" id="inlineRadio2" value="Orange">
+                                <label class="form-check-label" for="inlineRadio2">Orange</label>
+                              </div>
+                           
                                 <div class="mb-4">
                                     <input type="hidden" name="id" value="<%=data._id%>" required="true">
                                     <%for(i=0;i<data.image.length;i++){%>
@@ -263,7 +297,7 @@
     function validate(){
         document.getElementById('err-msg').innerHTML = ''
         let name = document.getElementById('name').value;
-        const nameRegex = /^[A-Za-z0-9]{1,50}$/;
+        const nameRegex = /^[a-zA-Z0-9\s'’-.,!&()]+$/u;
 
         if(nameRegex.test(name)){
         }else{  

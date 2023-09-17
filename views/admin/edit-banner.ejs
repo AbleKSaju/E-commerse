@@ -61,10 +61,15 @@
                                     <option>Female</option>
                                 </select>
                               </div>
-                              <div class="mb-4 mt-2">
-                                <label for="product_name" class="form-label">Link</label>
-                                <input type="text"  id="link" maxlength="50" name="link" value="<%=data.link%>"  placeholder="Type here" class="form-control">
-                            </div>
+                              <div class="row">
+                                <label class="form-label">Link </label>
+                                <select name="link" class="form-select">
+                                  <option><%=data.link%></option>
+                                  <%for(i=0;i<category.length;i++){%>
+                                    <option><%=category[i].name%></option>
+                                    <%}%>
+                                </select>
+                              </div>
                               <p class="text-danger" id="err-msg"></p>
                              <br><br>
                               <div class="d-flex justify-content-end">

@@ -5,22 +5,46 @@ const nodemailer = require("nodemailer");
 const categories = require("../model/category-model");
 const mongodb = require("mongodb");
 const order = require("../model/order-model");
+const coupon = require("../model/coupon-model");
 const { log } = require("debug/src/browser");
-const banner= require("../model/banner-model");
-const Razorpay=require("razorpay")
-// var instance =  new Razorpay({ key_id: 'rzp_test_80jNgNYgTgs47P', key_secret: 'Ag95tYV92s1TcaDaz0Ix79A8' });
-var instance = new Razorpay({ key_id: 'rzp_test_sPwoxcRC0hnSFO', key_secret: 'FawYUz1dMjHVYWrf9ZEUjOXi' })
+const easyinvoice = require('easyinvoice');
+const { Readable } = require("stream");
+const banner = require("../model/banner-model");
+const Razorpay = require("razorpay");
+const invoice=require("../middlewares/invoice")
+require("dotenv").config();
 
-const index = async(req, res) => {
+var instance = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
+
+const index = async (req, res) => {
   try {
+    if (req.query.id) {
+      console.log("wallet");
+      await user.findByIdAndUpdate(req.query.id, { $inc: { wallet: 200 } });
+      await user.findByIdAndUpdate(req.query.id,{$push:{'history':{amount:200,status:'debit',date:Date.now()}}},{new:true})
+      await user.findByIdAndUpdate(req.session.user, { $inc: { wallet: 200 } });
+      await user.findByIdAndUpdate(req.session.user,{$push:{'history':{amount:200,status:'debit',date:Date.now()}}},{new:true})
 
-    const banners = await banner.find({location: 'Home'}).lean();
-    console.log(banners, "ban");
-    res.render("user/index", { isLoggedIn: req.session.user ,banner:banners});
+    }
+    // if(req.session.refralUser){
+    //   await user.findByIdAndUpdate(req.session.refralUser,{$inc:{wallet:200}})
+    //   await user.findByIdAndUpdate(req.session.user,{$inc:{wallet:200}})
+    //   req.session.refralUser="used"
+    // }
+    const banners = await banner.find({ location: "Home" }).lean();
+    const products = await product.find().sort({ createdOn: -1 }).lean();
+    res.render("user/index", {
+      isLoggedIn: req.session.user,
+      banner: banners,
+      products,
+    })
   } catch (error) {
     console.log(error);
   }
-};
+}
 
 const login = (req, res) => {
   if (req.session.user) {
@@ -36,7 +60,7 @@ const verifyLoggin = async (req, res) => {
     const userExist = await user.findOne({
       email: userData.email,
       verified: 0,
-    });
+    })
     if (!userExist) {
       return res.render("user/login", {
         email: "Email Error",
@@ -60,6 +84,10 @@ const verifyLoggin = async (req, res) => {
 };
 
 const signup = (req, res) => {
+  if (req.query.id) {
+    req.session.refralUser = req.query.id;
+  }
+
   res.render("user/signup", { exist: req.session.user });
   req.session.userExist = false;
 };
@@ -76,13 +104,13 @@ const verigySignup = async (req, res) => {
       const transport = nodemailer.createTransport({
         service: "gmail",
         auth: {
-          user: "ableksaju3@gmail.com",
-          pass: "jxvshrcnlmpaxxqc",
+          user: process.env.EMAIL,
+          pass: process.env.PASSWORD,
           authMethod: "PLAIN",
         },
       });
       const mail = {
-        from: "ableksaju3@gmail.com",
+        from: process.env.EMAIL,
         to: req.body.email,
         subject: "STEPZ otp verification",
         text: `Thank you for choosing Stepz. Use the following OTP to complete your Sign Up procedures. 
@@ -128,7 +156,12 @@ const signUpOtpConfirm = async (req, res) => {
     try {
       const savedUser = await newUser.save();
       req.session.user = savedUser._id;
-      res.redirect("/");
+      if (req.session.refralUser) {
+        var refral = req.session.refralUser;
+        res.redirect(`/?id=${refral}`);
+      } else {
+        res.redirect("/");
+      }
     } catch (error) {
       console.error(error);
       res.redirect("/error-page");
@@ -136,7 +169,8 @@ const signUpOtpConfirm = async (req, res) => {
   } else {
     req.session.otpErr = true;
     res.redirect("/otp-page");
-  }2
+  }
+  2;
 };
 
 const loginOtp = (req, res) => {
@@ -247,134 +281,16 @@ const loginOtpConfirm = async (req, res) => {
 //         })
 //     })
 // }
-const productShow = async (req, res) => {
-  try {
-    const banners = await banner.find({location:"Products"}).lean()
-    const allCategories = await categories.find({}).lean();
-    const currentPage = parseInt(req.query.page) || 1;
-    const itemsPerPage = 6;
-
-    const totalProducts = await product.countDocuments({ verified: "0" });
-    const totalPages = Math.ceil(totalProducts / itemsPerPage);
-
-    const products = await product
-      .find({ verified: "0" })
-      .skip((currentPage - 1) * itemsPerPage)
-      .limit(itemsPerPage)
-      .lean();
-
-    res.render("user/products", {
-      banner:banners,
-      data: allCategories,
-      cat: "all",
-      isLoggedIn: req.session.user,
-      products,
-      totalPages,
-      currentPage,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send("Internal Server Error");
-  }
-};
-
-const searchProduct = async (req, res) => {
-  try {
-    const banners=await banner.find({location:"Products"}).lean()
-    const search = req.query.search;
-    const categoriesData = await categories.find().lean();
-    const searchData = await product
-      .find({
-        $or: [
-          {
-            name: { $regex: ".*" + search + ".*", $options: "i" },
-          },
-          {
-            saleprice: { $regex: ".*" + search + ".*", $options: "i" },
-          },
-        ],
-      })
-      .lean();
-    res.render("user/products", {
-      products: searchData,
-      cat: "all",
-      isLoggedIn: req.session.user,
-      totalPages: false,
-      banner:banners
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Internal Server Error");
-  }
-};
-
-const bradWise = async (req, res) => {
-  const banners=await banner.find({location:"Products"}).lean() 
-  categories
-    .find({ name: req.params.id })
-    .lean()
-    .then((data) => {
-      var category = data;
-      product
-        .find({ name: req.params.id })
-        .lean()
-        .then((data) => {
-          res.render("user/products", {
-            products: data,
-            isLoggedIn: req.session.user,
-            cat: category,
-            totalPages: false,
-            banner:banners
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    });
-};
-
-const subCategory=async(req,res)=>{
-  const banners = await banner.find({location:"Products"})
-  const category=await categories.find().lean()
-  await product.find({ subCategory: req.params.cat}).lean()
-  .then((data)=>{
-    console.log(data,"data");
-    res.render('user/products',{products:data,isLoggedIn:req.session.user,subCategory:req.params.cat,cat:null,totalPages:false,banner:banners})
-  }).catch((err)=>{
-    console.log(err);
-  })
-  
-
-}
-
-const productDetails = async(req, res) => {
-  id = req.query.id;
-  await product
-    .find({ _id: id })
-    .lean()
-    .then((data) => {
-      product.find().lean()
-      .then((products)=>{
-        res.render("user/product-display", {
-          products:products,
-          data: data,
-          isLoggedIn: req.session.user,
-        });
-      })
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
 
 const makePurchase = async (req, res) => {
- 
-  if(!req.body.addressId){
-    res.json({status:false})
-  }else{
-    var productUnit=true
-    var orderId
-    const totalPrice = parseInt(req.body.totalPrice);
+  if (!req.body.addressId) {
+    res.json({ status: false });
+  }else if(req.body.payment =='paypal'){
+    return res.json({status:false})
+  }else {
+    var productUnit = true;
+    var orderId;
+    var totalPrice = parseInt(req.body.totalPrice);
     const currentDate = new Date();
     const [year, month, day] = [
       currentDate.getFullYear(),
@@ -385,10 +301,10 @@ const makePurchase = async (req, res) => {
     id = req.session.user;
     let oid = new mongodb.ObjectId(id);
     if (req.body.quantity && req.body.size) {
-      const products=await product.findOne({_id:req.body.proId}).lean()
-      if(products.units<=0){
-        res.json({status:"outOfStock"})
-      }else{
+      const products = await product.findOne({ _id: req.body.proId }).lean();
+      if (products.units <= 0) {
+        res.json({ status: "outOfStock" });
+      } else {
         var data = await user.aggregate([
           {
             $match: { _id: oid },
@@ -400,28 +316,28 @@ const makePurchase = async (req, res) => {
             $match: { "address._id": parseInt(req.body.addressId) },
           },
         ]);
-        var proId=req.body.proId
-    var resultArray = [
-      {
-        productId:proId,
-        quantity: req.body.quantity,
-        size: req.body.size
+        var proId = req.body.proId;
+        var resultArray = [
+          {
+            productId: proId,
+            quantity: req.body.quantity,
+            size: req.body.size,
+          },
+        ];
+        var quantity = data[0].cart.map((product) => product.quantity);
+        var newOrder = await new order({
+          address: data[0].address,
+          product: resultArray,
+          userId: req.body.userId,
+          totalPrice: totalPrice,
+          date: date,
+          payment: req.body.payment,
+          status: 0,
+        });
+        const orderData = await newOrder.save();
+
+        orderId = orderData._id;
       }
-    ]
-    
-    let newOrder = await new order({
-      address: data[0].address,
-      product: resultArray,
-      userId: req.body.userId,
-      totalPrice: totalPrice,
-      date: date,
-      payment: req.body.payment,
-      status: 0,
-    });
-      const orderData = await newOrder.save();
-      orderId=orderData._id
-      }
-      
     } else {
       var data = await user.aggregate([
         {
@@ -434,13 +350,13 @@ const makePurchase = async (req, res) => {
           $match: { "address._id": parseInt(req.body.addressId) },
         },
       ]);
-      var productIds = data[0].cart.map(product => product.productId);
-      const products=await product.findOne({_id:productIds}).lean()
-      if((products.units-data[0].cart[0].quantity)<=0){
-        productUnit=false
-      }else{
-        var quantity = data[0].cart.map(product => product.quantity);
-        let newOrder = await new order({ 
+      var productIds = data[0].cart.map((product) => product.productId);
+      const products = await product.findOne({ _id: productIds }).lean();
+      if (products.units - data[0].cart[0].quantity <= 0) {
+        productUnit = false;
+      } else {
+        var quantity = data[0].cart.map((product) => product.quantity);
+        var newOrder = await new order({
           address: data[0].address,
           product: data[0].cart,
           userId: req.body.userId,
@@ -449,36 +365,65 @@ const makePurchase = async (req, res) => {
           payment: req.body.payment,
           status: 0,
         });
+
         try {
           const orderData = await newOrder.save();
-          orderId=orderData._id
+
+          orderId = orderData._id;
           await user.findByIdAndUpdate(
             req.session.user,
             { $set: { cart: [] } },
             { new: true }
-          )
+          );
         } catch (error) {
           console.error(error);
           res.json({ status: false, error: "Failed to save the order." });
         }
       }
     }
-    if(req.body.payment=="cod"&&productUnit===true){
-      res.json({ status: "cod"})
-    }else if(req.body.payment=="razorpay"&&productUnit===true){
-      instance.orders.create({
-        amount: req.body.totalPrice*100,
-        currency: "INR",
-        receipt: orderId
-      }).then((response)=>{
-        res.json({status:'razorpay',order:response,id:orderId})
-      })
-    }else if(productUnit==false){
-      res.json({status:"outOfStock"})
+    if (req.body.wallet == 0) {
+      await user.findByIdAndUpdate(req.session.user, { wallet: 0 });
+    }
+    if (req.body.payment == "cod" && productUnit === true) {
+      //const usr=await user.findOne({_id:req.session.user}).lean()
+      //const invoiceSent = await invoice.generateAndSendInvoice(req,res,orderId, usr.email);
+      // console.log(invoiceSent,"ins");
+      // if (invoiceSent) {
+      //   console.log("1");
+        res.json({ status: "cod" });
+      // } else {
+      //   console.log("2");
+      //   res.status(500).json({ message: 'Internal server error' });
+      // }
 
-    }else{
-    res.json({status:false})
-  }
+    } else if (req.body.payment == "razorpay" && productUnit === true) {
+      //const usr=await user.findOne({_id:req.session.user}).lean()
+      //invoice.generateAndSendInvoice(req,res,orderId,usr.email)
+      console.log("hiii");
+      instance.orders
+        .create({
+          amount: req.body.totalPrice * 100,
+          currency: "INR",
+          receipt: orderId,
+        })
+        .then((response) => {
+          res.json({ status: "razorpay", order: response, id: orderId });
+        });
+    } else if (req.body.payment == "wallet" && productUnit === true) {
+      var amount=-req.body.totalPrice
+      await user.findByIdAndUpdate(req.session.user,{$push:{'history':{amount:amount,status:'debit',date:Date.now()}}},{new:true})
+      await user.findByIdAndUpdate(
+        { _id: req.session.user },
+        { $inc: { wallet: -req.body.totalPrice } }
+      );
+      //const usr=await user.findOne({_id:req.session.user}).lean()
+      // invoice.generateAndSendInvoice(req,res,orderId,usr.email)
+      res.json({ status: "wallet" })
+    } else if (productUnit == false) {
+      res.json({ status: "outOfStock" })
+    } else {
+      res.json({ status: false });
+    }
     try {
       if (proId) {
         const quantity = parseInt(req.body.quantity);
@@ -493,15 +438,19 @@ const makePurchase = async (req, res) => {
         } catch (err) {
           console.error(err);
         }
-      }
-      else if (productIds && Array.isArray(productIds) && Array.isArray(quantity) && productIds.length === quantity.length) {
+      } else if (
+        productIds &&
+        Array.isArray(productIds) &&
+        Array.isArray(quantity) &&
+        productIds.length === quantity.length
+      ) {
         try {
           for (let i = 0; i < productIds.length; i++) {
             const productId = productIds[i];
             const qty = parseInt(quantity[i]);
-      
+
             const productToUpdate = await product.findById(productId);
-      
+
             if (!productToUpdate) {
               console.log(`Product with ID ${productId} not found.`);
             } else {
@@ -509,63 +458,86 @@ const makePurchase = async (req, res) => {
               const newUnits = currentUnits - qty;
               productToUpdate.units = newUnits;
               await productToUpdate.save();
-              console.log(`Product with ID ${productId} updated. New units: ${newUnits}`);
+              console.log(
+                `Product with ID ${productId} updated. New units: ${newUnits}`
+              )
             }
           }
         } catch (err) {
           console.error(err);
         }
       }
-      
     } catch (error) {
       console.error(error);
     }
   }
-  
+};
+
+const applyCoupon = async (req, res) => {
+  try {
+    var offerPrice;
+    const offer = await coupon.findOne({ code: req.body.name }).lean();
+    if (!offer) {
+      return res.status(404).json({ message: "Coupon not found" });
+    }
+    offerPrice = parseInt(offer.offerPrice);
+    console.log(req.body);
+    await coupon.findOneAndUpdate(
+      { name: req.body.coupon },
+      { $push: { user: req.session.user } }
+    );
+    res.json({ offerPrice: offerPrice });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 const orderPage = async (req, res) => {
   try {
-    // let userId = req.session.user;
-    // const currentDate = new Date();
-    // const [year, month, day] = [
-    //   currentDate.getFullYear(),
-    //   (currentDate.getMonth() + 1).toString().padStart(2, "0"),
-    //   currentDate.getDate().toString().padStart(2, "0"),
-    // ];
-    // var date = `${day} / ${month} / ${year}`;
-    // let oid = new mongodb.ObjectId(userId);
-    var orderDetails = await order.aggregate([
-      { $match: { userId: req.session.user } },
-      { $unwind: "$product" },
-      {
-        $project: {
-          proId: { $toObjectId: "$product.productId" },
-          quantity: "$product.quantity",
-          size: "$product.size",
-          address: "$address",
-          status: "$status",
-          totalPrice: "$totalPrice",
-          payment: "$payment",
-          date: "$date",
-        },
-      },
-      {
-        $lookup: {
-          from: "products",
-          localField: "proId",
-          foreignField: "_id",
-          as: "orderDetails",
-        },
-      },
-    ]);
+    req.body
+    var orderDetails = await order.find({userId:req.session.user}).lean()
+    // await order.aggregate([
+    //   { $match: { userId: req.session.user } },
+    //   { $unwind: "$product" },
+    //   {
+    //     $project: {
+    //       proId: { $toObjectId: "$product.productId" },
+    //       quantity: "$product.quantity",
+    //       size: "$product.size",
+    //       address: "$address",
+    //       status: "$status",
+    //       payment: "$payment",
+    //       date: "$date",
+    //       totalPrice: "$totalPrice",
+    //     },
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: "products",
+    //       localField: "proId",
+    //       foreignField: "_id",
+    //       as: "orderDetails",
+    //     },
+    //   },
+    // ]);
+    orderDetails.reverse();
+    console.log(orderDetails,"od");
     await user
       .findOne({ _id: req.session.user })
       .lean()
       .then((data) => {
+        const itemsperpage = 10;
+        const currentpage = parseInt(req.query.page) || 1;
+        const startindex = (currentpage - 1) * itemsperpage;
+        const endindex = startindex + itemsperpage;
+        const totalpages = Math.ceil(orderDetails.length / 10);
+        const currentproduct = orderDetails.slice(startindex,endindex);
         res.render("user/order", {
-          order: orderDetails,
+          order: currentproduct,
           data: data,
+          currentpage,
+          totalpages,
         });
       });
   } catch (error) {
@@ -574,84 +546,152 @@ const orderPage = async (req, res) => {
   }
 };
 
-const orderDetails=async(req, res) => {
-  await order.findById(req.body.oid).lean()
-     .then((data) => {
-       if (data) {
-         res.json({status:data});
-       } else {
-         res.status(404).json({ error: 'Order not found' });
-       }
-     })
-     .catch((err) => {
-       res.status(500).json({ error: 'Internal server error' });
-     });
- }
+const orderDetails=async(req,res)=>{
+  await order.findOne({_id:req.query.id}).lean()
+  .then(async(data)=>{
+          let oid=new mongodb.ObjectId(req.query.id) 
+          let productDetails= await order.aggregate([
+                  {$match:{_id:oid}},
+                  {$unwind:'$product'},
+                  {$project:{
+                          proId:{$toObjectId:'$product.productId'},
+                          quantity:'$product.quantity',
+                          totalPrice:'$totalPrice'  
+                      }},
+                      {$lookup:{
+                          from:'products',
+                          localField:'proId',
+                          foreignField:'_id',
+                          as:'ProductDetails'
+                      }}
+          ])
+      res.render('user/order-details',{orders:data,productDetails,isLoggedIn:req.session.user})
+  })
+}
+
+// const orderDetails = async (req, res) => {
+  // await order
+  //   .findById(req.body.oid)
+  //   .lean()
+  //   .then((data) => {
+  //     if (data) {
+  //       res.json({ status: data });
+  //     } else {
+  //       res.status(404).json({ error: "Order not found" });
+  //     }
+  //   })
+  //   .catch((err) => {
+  //     res.status(500).json({ error: "Internal server error" });
+  //   });
+//};
 
 const cancelOrder = async (req, res) => {
+  console.log(req.body, "by");
+  let oid = new mongodb.ObjectId(req.body.id);
   try {
-    await order.updateOne(
-      { _id: req.body.orderId },
-      { status: "-1" }
+    if (req.body.payment == "wallet" || req.body.payment == "razorpay") {
+      await user.findByIdAndUpdate(req.session.user, {
+        $inc: { wallet: req.body.totalPrice },
+      });
+    }
+    await order.updateOne({ _id: req.body.orderId }, { status: "-1" });
+    await order
+      .find({ _id: req.body.orderId })
+      .lean()
+      .then((data) => {
+        user.findByIdAndUpdate({});
+      });
+    const unitsToIncrement = parseInt(req.body.units);
+    await product.updateOne(
+      { _id: oid },
+      { $inc: { units: unitsToIncrement } }
     );
     res.json({ status: true });
   } catch (err) {
-    console.error(err);
+    console.error(err, "err");
     res.json({ status: false });
   }
 };
 
-const wishList=async (req,res)=>{
-  var userId=req.session.user
-  var oid=new mongodb.ObjectId(userId)
- var wishList= await user.aggregate([
-          {$match:{_id:oid}},
-          {$unwind:'$wishList'},
-          {        
-                  $project: {
-                    proId: { $toObjectId: "$wishList.proId" },
-                  },
-          },{
-                  $lookup: {
-                    from: "products",
-                    localField: "proId",
-                    foreignField: "_id",
-                    as: "wishlist",
-                  },
-          }
-  ])
-  res.render('user/wishlist',{isLoggedIn:req.session.user,data:wishList})
-}
+const wishList = async (req, res) => {
+  var userId = req.session.user;
+  var oid = new mongodb.ObjectId(userId);
+  var wishList = await user.aggregate([
+    { $match: { _id: oid } },
+    { $unwind: "$wishList" },
+    {
+      $project: {
+        proId: { $toObjectId: "$wishList.proId" },
+      },
+    },
+    {
+      $lookup: {
+        from: "products",
+        localField: "proId",
+        foreignField: "_id",
+        as: "wishlist",
+      },
+    },
+  ]);
+  res.render("user/wishlist", { isLoggedIn: req.session.user, data: wishList });
+};
 
-const addToWishList= async (req, res) => {
+const addToWishList = async (req, res) => {
   try {
     const userId = req.session.user;
     const proId = req.body.proId;
-    const userDoc = await user.findOne({ _id: userId, 'wishList.proId': proId });
+    const userDoc = await user.findOne({
+      _id: userId,
+      "wishList.proId": proId,
+    });
     if (userDoc) {
       res.json({ exist: true });
     } else {
-     await user.findByIdAndUpdate(
-        userId ,
-        { $addToSet: { wishList: {proId} } },
+      await user.findByIdAndUpdate(
+        userId,
+        { $addToSet: { wishList: { proId } } },
         { new: true }
-     )
-          res.json({ status: true});
-      }
-    } catch (error) {
+      );
+      res.json({ status: true });
+    }
+  } catch (error) {
     console.error(error);
   }
-}
+};
 
-const removeWishList=async (req,res)=>{
-  await user.updateOne(
-          { _id: req.session.user },
-          { $pull: { wishList: { proId: req.body.proId } } }
-        )
-  .then((data)=>{
-         res.json(true)
-  })
-}
+const removeWishList = async (req, res) => {
+  await user
+    .updateOne(
+      { _id: req.session.user },
+      { $pull: { wishList: { proId: req.body.proId } } }
+    )
+    .then((data) => {
+      res.json(true);
+    });
+};
+
+const addMoney = (req, res) => {
+  try {
+    var options ={
+      amount: req.body.total * 100,
+      currency: "INR",
+      receipt: "" + Date.now(),
+    };
+    instance.orders.create(options,async function(err, order) {
+      if (err) {
+        console.log("Error while creating order : ", err);
+      } else {
+        var amount=order.amount/100;
+        console.log(amount);
+        var x=await user.findByIdAndUpdate(req.session.user,{$push:{'history':{amount:amount,status:'credit',date:Date.now()}}},{new:true})
+        res.json({ order: order, razorpay: true });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+    res.send("Cannot add amount into your acccount");
+  }
+};
 
 const account = async (req, res) => {
   if (req.session.user) {
@@ -703,6 +743,44 @@ const confirmAddress = async (req, res) => {
       res.redirect("/account");
     });
 };
+const editAddress=async (req, res) => {
+  try {
+    const usr = await user.findOne({ _id: req.session.user });
+    const addr = usr.address.find(address => address._id == req.query.id);
+    res.render('user/edit-address', { address: addr ,id:req.query.id});
+  } catch (error) {
+    console.error("Error fetching user data:", error)
+    res.status(500).send("Internal Server Error")
+  }
+}
+
+const editedAddress=async(req,res)=>{
+  console.log(req.body.id)
+  req.body.id= parseInt(req.body.id)
+  console.log(req.session.user)
+  const edited = await user.updateOne(
+          {
+            _id: req.session.user,
+            "address._id": req.body.id
+          },
+          {
+            $set: {
+              "address.$.name": req.body.name,
+              "address.$.number": req.body.number,
+              "address.$.altNumber": req.body.altNumber,
+              "address.$.pinCode": req.body.pinCode,
+              "address.$.house": req.body.house,
+              "address.$.area":req.body.area,
+              "address.$.landmark": req.body.landmark,
+              "address.$.town": req.body.town,
+              "address.$.state": req.body.state,
+            }
+          }
+          
+  )
+  console.log(edited,"edd");
+  res.redirect('/account')
+}
 
 const removeAddress = async (req, res) => {
   id = req.session.user;
@@ -717,7 +795,8 @@ const removeAddress = async (req, res) => {
     });
 };
 
-const editAddress = async (req, res) => {
+
+const editProfile = async (req, res) => {
   await user
     .findOne({ _id: req.session.user })
     .lean()
@@ -730,47 +809,75 @@ const editAddress = async (req, res) => {
     });
 };
 
-const editProfile = async (req, res) => {
-  if (req.body.originalEmail == req.body.email) {
-    await user
-      .findByIdAndUpdate(req.session.user, {
-        name: req.body.name,
-        number: req.body.number,
-      })
-      .lean()
-      .then((data) => {
-        res.redirect("/account");
-      });
-  } else {
-    await user
-      .findById(req.session.user)
-      .lean()
-      .then((data) => {
-        var x = data;
-        user
-          .find({ email: req.body.email })
-          .lean()
-          .then((data) => {
-            if (data == true) {
-              res.render("user/edit-profile", {
-                userData: x,
-                exist: "Account Already Exist",
-              });
-            } else {
-              user
-                .findByIdAndUpdate(req.session.user, { email: req.body.email })
-                .lean()
-                .then((data) => {
-                  res.redirect("/account");
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-            }
-          });
-      });
-  }
+const returnOrder = async (req, res) => {
+  const text = req.body.text.toString();
+  const orderId = req.body.orderId;
+  var updatedOrder = await order.findByIdAndUpdate(
+    orderId,
+    { status: "3", reason: text },
+    { new: true }
+  );
+  await user.findByIdAndUpdate(updatedOrder.userId, {
+    $inc: { wallet: updatedOrder.totalPrice },
+  });
+  res.json({ updatedOrder });
 };
+
+const verifyPayment = async (req, res) => {
+  var details = req.body;
+  var amount = details["order[order][amount]"] / 100;
+  await user.findByIdAndUpdate(req.session.user, { $inc: { wallet: amount } });
+};
+
+const history = async (req, res) => {
+  const userData = await user.findOne({ _id: req.session.user });
+  const history = userData.history;
+
+  const formattedHistory = history.map((entry) => {
+    const timestamp = entry.date;
+    const date = new Date(timestamp);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const year = date.getFullYear();
+    const formattedDate = `${month}/${day}/${year}`;
+    return { ...entry, formattedDate };
+  });
+
+  const wallet = userData.wallet;
+  const itemsperpage = 15;
+  const currentpage = parseInt(req.query.page) || 1;
+  const startindex = (currentpage - 1) * itemsperpage;
+  const endindex = startindex + itemsperpage;
+  const totalpages = Math.ceil(formattedHistory.length / 15);
+  const currentHistory = formattedHistory.slice(startindex,endindex);
+  res.render('user/show-history', {
+    isLoggedIn: req.session.user,
+    history: currentHistory,
+    currentpage,
+    totalpages,
+    wallet,
+  });
+};
+
+const wallet = async (req, res) => {
+  var userData = await user.findOne({ _id: req.session.user });
+  res.render("user/wallet", { isLoggedIn: req.session.user, userData });
+};
+
+const editedProfile = async (req, res) => {
+  console.log(req.body);
+  await user
+    .findByIdAndUpdate(req.session.user, {
+      name: req.body.name,
+      mobile: req.body.number,
+      bio: req.body.bio,
+    })
+    .lean()
+    .then((data) => {
+      res.redirect("/account");
+    });
+};
+
 const changePassword = (req, res) => {
   if (req.session.err) {
     res.redirect("/account");
@@ -834,12 +941,8 @@ module.exports = {
   loginOtp,
   otpPage,
   loginOtpSent,
-  productShow,
-  bradWise,
-  subCategory,
-  productDetails,
-  searchProduct,
   makePurchase,
+  applyCoupon,
   orderPage,
   orderDetails,
   cancelOrder,
@@ -848,7 +951,13 @@ module.exports = {
   addAddress,
   confirmAddress,
   removeAddress,
+  addMoney,
   editAddress,
+  editedAddress,
+  editedProfile,
+  wallet,
+  verifyPayment,
+  returnOrder,
   changePassword,
   checkPassword,
   confirmPassword,
@@ -857,4 +966,6 @@ module.exports = {
   removeWishList,
   logOut,
   editProfile,
+  history
 };
+

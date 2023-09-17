@@ -27,13 +27,11 @@
         <section class="content-main">
             <div class="content-header">
                 <h2 class="content-title">Sellers list</h2>
-                <div>
-                    <a href="#" class="btn btn-primary"><i class="material-icons md-plus"></i> Create new</a>
-                </div>
+          
             </div>
             <div class="card mb-4">
                 <header class="card-header">
-                    <div class="row gx-3">
+                    <!-- <div class="row gx-3">
                         <div class="col-lg-4 col-md-6 me-auto">
                             <input type="text" placeholder="Search..." class="form-control">
                         </div>
@@ -52,8 +50,8 @@
                                 <option>Show 40</option>
                             </select>
                         </div>
-                    </div>
-                </header> <!-- card-header end// -->
+                    </div> -->
+                </header>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -106,24 +104,61 @@
                                     </tr>
                                 <% } %>
                             </tbody>
+                        
                         </table> <!-- table-responsive.// -->
+                        <% if (totalpages) { %>
+                            <div class="pagination">
+                              <% if (currentpage > 1) { %>
+                                <button><a href="?page=<%= currentpage - 1 %>">Previous</a></button>
+                              <% } %>
+                          
+                              <% for (let i = 1; i <= totalpages; i++) { %> <!-- Change the loop to start from 1 and go up to totalpages -->
+                                <button><a href="?page=<%= i %>" class="<%= i === currentpage ? 'active' : '' %>"><%= i %></a></button>
+                              <% } %>
+                          
+                              <% if (currentpage < totalpages) { %>
+                                <button><a href="?page=<%= currentpage + 1 %>">Next</a></button>
+                              <% } %>
+                            </div>
+                          <% } %> 
                     </div>
                 </div> <!-- card-body end// -->
             </div> <!-- card end// -->
             <div class="pagination-area mt-15 mb-50">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-start">
-                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                        <li class="page-item"><a class="page-link" href="#">02</a></li>
-                        <li class="page-item"><a class="page-link" href="#">03</a></li>
-                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">16</a></li>
-                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
-                    </ul>
-                </nav>
-            </div>
         </section> <!-- content-main end// -->
-
+        <style>
+            .table-spacing th,
+            .table-spacing td {
+                padding-left: 80px; /* Adjust the value as needed for the desired spacing */
+            }
+            .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        }
+        
+        .pagination button {
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+        padding: 6px 12px;
+        margin: 0 3px;
+        cursor: pointer;
+        
+        transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .pagination button.active {
+        background-color: #007bff;
+        color: #fff;
+        border-color: #007bff;
+        }
+        
+        .pagination button:hover {
+        background-color: #ddd;
+        }
+        
+        </style>
     </main>
     <script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>

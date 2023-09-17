@@ -36,6 +36,16 @@ const userModal=mongoose.Schema({
     },
     address:{
         type:Array
+    },
+    bio:{
+        type:String
+    },
+    wallet:{
+        type:Number,
+        default:0
+    },
+    history:{
+        type:Array
     }
 })
 module.exports=mongoose.model('user',userModal)

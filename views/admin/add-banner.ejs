@@ -48,8 +48,8 @@
                                   <input type="text"  id="name" maxlength="50" name="name"  placeholder="Type here" class="form-control">
                               </div>
                               <div class="mb-4">
-                                <label class="form-label">description</label>
-                                <textarea placeholder="Type here"  id="description" maxlength="150"  name="description"  class="form-control" rows="4"></textarea>
+                                <label class="form-label">Description</label>
+                                <textarea placeholder="Type here" name="description" id="description" class="form-control"></textarea>
                             </div>
                               <div class="row">
                                 <label class="form-label">Location </label>
@@ -60,10 +60,26 @@
                                     <option>Female</option>
                                 </select>
                               </div>
-                              <div class="mb-4 mt-2">
-                                <label for="product_name" class="form-label">Link</label>
-                                <input type="text"  id="link" maxlength="50" name="link"  placeholder="Type here" class="form-control">
-                            </div>
+                              <%if(locals.category){%>
+                              <div class="row">
+                                <label class="form-label">Link </label>
+                                <select name="link" class="form-select">
+                                  <%for(i=0;i<category.length;i++){%>
+                                    <option><%=category[i].name%></option>
+                                    <%}%>
+                                </select>
+                              </div>
+                              <%}%>
+                              <%if(locals.subCategory){%>
+                                <div class="row">
+                                  <label class="form-label">Link </label>
+                                  <select name="link" class="form-select">
+                                    <%for(i=0;i<category.length;i++){%>
+                                      <option><%=category[i].name%></option>
+                                      <%}%>
+                                  </select>
+                                </div>
+                                <%}%>
                               <p class="text-danger" id="err-msg"></p>
                              <br><br>
                               <div class="d-flex justify-content-end">                 
@@ -118,57 +134,32 @@
           //alert("Name Eroor 1:Start with capital letter 2:No white spaces 3:No Special symbols")
           event.preventDefault()
         }
-        
-        const RpriceRegex =/^[1-9][0-9]*$/
-
-
-        let Rprice = document.getElementById('Rprice').value;
-        if(RpriceRegex.test(Rprice)){
-          document.getElementById('Rprice').style.borderColor = 'white'
-        }else{
-          document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Regular Price error'
-          document.getElementById('Rprice').style.borderColor = 'red'
-          //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
-          event.preventDefault()
-        }
-
-        const PpriceRegex = /^[1-9][0-9]*$/
-
-
-        let Pprice = document.getElementById('Pprice').value;
-        if(RpriceRegex.test(Pprice)){
-          document.getElementById('Pprice').style.borderColor = 'white'
-        }else{
-        document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Promotional Price error'
-        document.getElementById('Pprice').style.borderColor = 'red'
-        //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
-        event.preventDefault()
-        }
-
-        const unitRegex = /^\d+$/;
-
-        let unit = document.getElementById('unit').value;
-        if(unitRegex.test(unit)){
-          document.getElementById('unit').style.borderColor = 'white'
-        }else{
-        document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> unit  error'
-        document.getElementById('unit').style.borderColor = 'red'
-        //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
-        event.preventDefault()
-        }
-
         const descRegex = /^(?!\s*$).+/; 
+    
+    
+    let description = document.getElementById('description').value;
+    if(descRegex.test(description)){
+        document.getElementById('name').style.borderColor = 'white'
+    }else{
+    document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Description  error'
+    document.getElementById('description').style.borderColor = 'red'
+    document.getElementById('description').style.borderWidth = '1px'
+    //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
+    event.preventDefault()
+    }
+
+        // const descRegex = /^(?!\s*$).+/; 
 
 
-        let description = document.getElementById('description').value;
-        if(descRegex.test(description)){
-          document.getElementById('description').style.borderColor = 'white'
-        }else{
-        document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Description  error'
-        document.getElementById('description').style.borderColor = 'red'
-        //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
-        event.preventDefault()
-        }
+        // let description = document.getElementById('description').value;
+        // if(descRegex.test(description)){
+        //   document.getElementById('description').style.borderColor = 'white'
+        // }else{
+        // document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Description  error'
+        // document.getElementById('description').style.borderColor = 'red'
+        // //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
+        // event.preventDefault()
+        // }
   
         const taxRegex = /^\d+$/;
 

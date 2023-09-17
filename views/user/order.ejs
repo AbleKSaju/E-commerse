@@ -18,11 +18,6 @@
     <!-- Template CSS -->
     <link href="/assets/css/main.css" rel="stylesheet" type="text/css" />
 </head>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <body>
    
     <div class="screen-overlay"></div>
@@ -71,56 +66,72 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Product</th>
-                                    <th>Name</th>
-                                    <th>Quality</th>
-                                    <th>Size</th>
-                                    <th>Total</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
-                                    <th>Action</th>
+                                    <th style="width:30%">id</th>
+                                    <th style="width:10%">Total</th>
+                                    <th style="width:10%">Status</th>
+                                    <th style="width:20%">Date</th>
+                                    <th style="width:20%">Action</th>                                    
                                 </tr>
                             </thead>
                             <tbody>
-                                
-                                <%for(i=order.length-1;i>=0;i--){%>
+                                <%for(i=0;i<=order.length-1;i++){%>
                                <tr>
-                                <a href="<%=order[i].orderDetails[0]._id%>"> <td> <img style="height:60px ;width: 60px;" src="/uploads/products/<%=order[i].orderDetails[0].image[0]%>" alt=""> </td>
-                                    <td><b class="fs-5"><%=order[i].orderDetails[0].name%></b></td>
-                                    <td><b><%=order[i].quantity%></b></td>
-                                    <td><b><%=order[i].size%></b></td>
-                                  
-                                    <!-- <td><%= order[i].orderDetails[0].quantity * order[i].orderDetails[0].saleprice %></td> -->
-                                    <td>₹ <%=order[i].quantity * parseInt(order[i].orderDetails[0].saleprice)%></td>
+                                    <td><b class="fs-5"><%=order[i]._id%></b></td>
+                                    <td>₹ <%=parseInt(order[i].totalPrice)%></td>
                                     <td>
-                                        </a>
-                                    <%if(order[i].status==0 || order[i].status==1){%>
+                                </a>
+                                    <%if(order[i].status==0 || order[i].status==1 || order[i].status==4){%>
                                         <span class="badge rounded-pill alert-warning">Pending</span>
                                           <%}else if(order[i].status==-1){%>
                                             <span class="badge rounded-pill alert-danger">cancelled </span>
                                             <%}else if(order[i].status==2){%>
                                                     <span class="badge rounded-pill alert-success">Delivered</span>
-                                                    <%}%>
+                                                    <%}else if(order[i].status==3){%>
+                                                        <span class="badge rounded-pill alert-secondary">Returned</span>
+                                                        <%}%>
                                 </td>
                                     <td><%=order[i].date%></td>    
                                     <td>
-                                      <button onclick="showDetails('<%=data.name%>','<%=data.mobile%>','<%=order[i].address[0].altNumber%>','<%=order[i].address[0].pinCode%>','<%=order[i].address[0].house%>','<%=order[i].address[0].area%>','<%=order[i].address[0].landmark%>','<%=order[i].address[0].town%>','<%=order[i].address[0].state%>','<%=order[i].totalPrice%>','<%=order[i].status%>','<%=order[i].payment%>','<%=order[i].date%>')" class="btn btn-success">Details</button>
+                                      <!-- <button onclick="showDetails('<%=data.name%>','<%=data.mobile%>','<%=order[i].address[0].altNumber%>','<%=order[i].address[0].pinCode%>','<%=order[i].address[0].house%>','<%=order[i].address[0].area%>','<%=order[i].address[0].landmark%>','<%=order[i].address[0].town%>','<%=order[i].address[0].state%>','<%=order[i].totalPrice%>','<%=order[i].status%>','<%=order[i].payment%>','<%=order[i].date%>')" class="btn btn-success">Details</button> -->
+                                     <a href="/orderDetailsPage?id=<%=order[i]._id%>"><button class="btn btn-success">Details</button></a> 
                                         <%if(order[i].status==0 || order[i].status==1){%>
-                                        <button onclick="cancel('<%=order[i]._id%>')" class="btn btn-outline-danger">Cancel</button>
+                                        <button onclick="cancel('<%=order[i]._id%>','<%=order[i].quantity%>','<%=order[i].payment%>','<%=order[i].totalPrice%>')" class="btn btn-outline-danger">Cancel</button>
                                         <%}else if(order[i].status==-1){%>
                                             <button  class="btn btn-danger" disabled>cancelled</button>
+                                            <%}else if(order[i].status==3){%>
+                                                <button  class="btn btn-danger" disabled>Returned</button>
                                             <%}else{%>
-                                                <button class="btn btn-success muted-text" disabled>Delivered</button>
+                                                <a onclick="orderReturn('<%=order[i]._id%>','<%=order[i].payment%>','<%=order[i].totalPrice%>')" class="btn btn-outline-secondary muted-text">Return</a>
                                             <%}%>
                                     </td>
+                                    <!-- <td>
+                                        <a class="btn btn-secondary print ms-2" href="/invoice?id=<%=order[i]._id%>"><i class="icon material-icons md-print"></i></a>
+
+                                    </td> -->
                                 </tr>
+
                             <%}%>
                             </tbody>
                         </table>
+                        <% if (totalpages) { %>
+                            <div class="pagination">
+                              <% if (currentpage > 1) { %>
+                                <button><a href="?page=<%= currentpage - 1 %>">Previous</a></button>
+                              <% } %>
+                          
+                              <% for (let i = 1; i <= totalpages; i++) { %> <!-- Change the loop to start from 1 and go up to totalpages -->
+                                <button><a href="?page=<%= i %>" class="<%= i === currentpage ? 'active' : '' %>"><%= i %></a></button>
+                              <% } %>
+                          
+                              <% if (currentpage < totalpages) { %>
+                                <button><a href="?page=<%= currentpage + 1 %>">Next</a></button>
+                              <% } %>
+                            </div>
+                          <% } %>                          
                     </div>
                 </div> 
             </div> 
-         <img src="/public/images/delivered.jpeg" alt="">
+         <!-- <img src="/public/images/returned.webp" alt=""> -->
         </section>
         <style>
             .table th, .table td {
@@ -128,7 +139,39 @@
             vertical-align: top;
             border-top: 1px solid #dee2e6;
             }
-        
+
+
+    .table-spacing th,
+    .table-spacing td {
+        padding-left: 80px; /* Adjust the value as needed for the desired spacing */
+    }
+    .pagination {
+display: flex;
+justify-content: center;
+align-items: center;
+margin-top: 20px;
+}
+
+.pagination button {
+background-color: #f5f5f5;
+border: 1px solid #ccc;
+padding: 6px 12px;
+margin: 0 3px;
+cursor: pointer;
+
+transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination button.active {
+background-color: #007bff;
+color: #fff;
+border-color: #007bff;
+}
+
+.pagination button:hover {
+background-color: #ddd;
+}
+
         </style>
         <footer class="main-footer font-xs">
             <%-include('../../partials/user-footer')%>
@@ -144,44 +187,87 @@
 </body>
 <script>
 
-function showDetails(name, number, altNumber, pinCode, house, area, landmark, town, state, totalPrice, orderStatus, payment, createdOn) {
-        if(orderStatus == '0' || orderStatus == '1') {
-            imgUrl = "/images/pending.jpeg"
-        }else if(orderStatus == '-1'){
-            imgUrl = '/images/cancelled.jpeg'
-        }else if(orderStatus == '2'){
-            imgUrl = '/images/delivered.jpeg'
+   async function orderReturn(orderId,payment,Total){
+  const { value: text } = await Swal.fire({
+  input: 'textarea',
+  inputLabel: 'Reason',
+  inputPlaceholder: 'Type your message here...',
+  inputAttributes: {
+    'aria-label': 'Type your message here'
+  },
+  showCancelButton: true
+})
+
+if (text) {
+  $.ajax({
+    url:'/returnOrder',
+    method:'post',
+    data:{
+        text,
+        orderId,
+        payment,
+        Total
+    },success:(response)=>{
+        if(response.updatedOrder.status=='3'){
+            Swal.fire({
+  icon: 'success',
+  title: 'Return Success',
+  text: 'Amount Added to Wallet',
+  confirmButtonText: 'Ok'
+}).then((result)=>{
+    location.reload()
+})
+
         }
-        Swal.fire({
-            title: '<strong><u>ORDER DETAILS</u></strong>',
-            imageUrl: imgUrl,
-            imageWidth: 400,
-            imageHeight: 200,
-            html:
-                'Name : ' + name + '<br>' + ' Number: ' + number + ',' + ' Alternative: ' + altNumber + '<hr>' +
-                '<h5>Delivery Address</h4> ' +
-                '<span style="font-weight:bold">Pin code:</span>' + pinCode + ', &nbsp'+
-                '<span style="font-weight:bold">House: </span>' + house + '<br>' +
-                '<span style="font-weight:bold">Area: </span>' + area + ',' +
-                '<span style="font-weight:bold">Landmark: </span>' + landmark + '<br>' +
-                '<span style="font-weight:bold">Town: </span>' + town + ',' +
-                '<span style="font-weight:bold">State: </span>' + state + '<br>' +
-                '<h4>Other info</h4>' +
-                '<span style="font-weight:bold">Order Status: </span>' + orderStatus + ','+
-                '<span style="font-weight:bold"> Payment Method: </span>' + payment + '<br>' +
-                '<span style="font-weight:bold">Grand Total: </span>' + totalPrice + '<br>' +
-                '<span style="font-weight:bold">Ordered On: </span>' + createdOn + '<hr>',
 
 
-            showCloseButton: true,
-            focusConfirm: true,
-            confirmButtonText:
-                '<i class="fa fa-thumbs-up"></i> Conntinue!',
-        })
+
+    }
+  })
+}
+
     }
 
-    function cancel(orderId){
-        Swal.fire({
+// function showDetails(name, number, altNumber, pinCode, house, area, landmark, town, state, totalPrice, orderStatus, payment, createdOn) {
+//         if(orderStatus == '0' || orderStatus == '1') {
+//             imgUrl = "/images/pending.jpeg"
+//         }else if(orderStatus == '-1'){
+//             imgUrl = '/images/cancelled.jpeg'
+//         }else if(orderStatus == '2'){
+//             imgUrl = '/images/delivered.jpeg'
+//         }else if(orderStatus == '3'){
+//             imgUrl = '/images/returned.webp'
+//         }
+    //     Swal.fire({
+    //         title: '<strong><u>ORDER DETAILS</u></strong>',
+    //         imageUrl: imgUrl,
+    //         imageWidth: 400,
+    //         imageHeight: 200,
+    //         html:
+    //             'Name : ' + name + '<br>' + ' Number: ' + number + ',' + ' Alternative: ' + altNumber + '<hr>' +
+    //             '<h5>Delivery Address</h4> ' +
+    //             '<span style="font-weight:bold">Pin code:</span>' + pinCode + ', &nbsp'+
+    //             '<span style="font-weight:bold">House: </span>' + house + '<br>' +
+    //             '<span style="font-weight:bold">Area: </span>' + area + ',' +
+    //             '<span style="font-weight:bold">Landmark: </span>' + landmark + '<br>' +
+    //             '<span style="font-weight:bold">Town: </span>' + town + ',' +
+    //             '<span style="font-weight:bold">State: </span>' + state + '<br>' +
+    //             '<h4>Other info</h4>' +
+    //             '<span style="font-weight:bold">Order Status: </span>' + orderStatus + ','+
+    //             '<span style="font-weight:bold"> Payment Method: </span>' + payment + '<br>' +
+    //             '<span style="font-weight:bold">Grand Total: </span>' + totalPrice + '<br>' +
+    //             '<span style="font-weight:bold">Ordered On: </span>' + createdOn + '<hr>',
+
+
+    //         showCloseButton: true,
+    //         focusConfirm: true,
+    //         confirmButtonText:
+    //             '<i class="fa fa-thumbs-up"></i> Conntinue!',
+    //     })
+    // }
+
+    function cancel(orderId,units,payment,totalPrice){
+  Swal.fire({
   title: 'Are you sure?',
   text: "You won't be able to revert this!",
   icon: 'warning',
@@ -195,7 +281,11 @@ function showDetails(name, number, altNumber, pinCode, house, area, landmark, to
             url:'/cancel',
             method:'post',
             data:{
-                orderId
+                orderId,
+                units,
+                id,
+                payment,
+                totalPrice
             },
             success:(response)=>{
                 if(response.status=true){

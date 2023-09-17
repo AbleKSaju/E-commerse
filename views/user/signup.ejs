@@ -17,8 +17,8 @@
                     <div class="d-flex flex-row align-items-center mb-4">
                       <!-- <i class="fas fa-user fa-lg me-3 fa-fw"></i> -->
                       <div class="form-outline flex-fill mb-0">
-                        <label class="form-label"  for="form3Example1c">Your Name</label>
-                        <input type="text" id="name" required="true" type="text" id="nameInput" onblur="capitalizeFirstLetter(this)" name="name"  class="form-control" />
+                        <label class="form-label"  for="form3Example1c">Your Name</label><br>
+                        <input type="text" id="name"  onblur="capitalizeFirstLetter(this)" name="name" style="width: 20rem;" />
                        
                       </div>
                     </div>
@@ -26,8 +26,8 @@
                       <div class="d-flex flex-row align-items-center mb-4">
                       <!-- <i class="fas fa-key fa-lg me-3 fa-fw"></i> -->
                       <div class="form-outline flex-fill mb-0">
-                        <label class="form-label" for="form3Example4cd">Mobile</label>
-                        <input type="text" id="number" required="true" title="must be 10 digits" pattern="[1-9]{1}[0-9]{9}" name="mobile" class="form-control" />
+                        <label class="form-label" for="form3Example4cd">Mobile</label><br>
+                        <input type="text" id="number"  title="must be 10 digits" pattern="[1-9]{1}[0-9]{9}" name="mobile"  style="width: 20rem;" />
               
                       </div>
                     </div>
@@ -35,82 +35,30 @@
                     <div class="d-flex flex-row align-items-center mb-4">
                       <!-- <i class="fas fa-envelope fa-lg me-3 fa-fw"></i> -->
                       <div class="form-outline flex-fill mb-0">
-                        <label class="form-label" for="form3Example3c">Your Email</label>
-                        <input type="email" id="email" required="true" name="email" class="form-control" />
+                        <label class="form-label" for="form3Example3c">Your Email</label><br>
+                        <input type="email" id="email"  name="email" style="width: 20rem; height: 3rem;" />
                       
                       </div>
                     </div>
-                   
-  
-                    <!-- <div class="d-flex flex-row align-items-center mb-4">
-                      <div class="form-outline flex-fill mb-0">
-                        <input type="password" id="password" required="true" pattern=".{4,}" title="Atleast 4 digit"  name="password" class="form-control" />
-                        <label class="form-label" for="form3Example4c">Password</label>
-                      </div>
-                    </div>
- 
-                    <div class="d-flex flex-row align-items-center mb-4">
-                      <div class="form-outline flex-fill mb-0">
-                        <input type="password" id="password" required="true" pattern=".{4,}" title="Atleast 4 digit"  name="password" class="form-control" />
-                        <label class="form-label" for="form3Example4c">Repeat Password</label>
-                      </div>
-                    </div> -->
                     <div class="d-flex flex-row align-items-center mb-4">
                       <div class="form-outline flex-fill mb-0">
                         <label class="form-label" for="password">Password</label>
                         <input
                           type="password"
                           id="password"
-                          required="true"
                           pattern=".{4,}"
                           title="At least 4 characters"
                           name="password"
-                          class="form-control"
-                          oninput="validatePasswords()"
+                          style="width: 20rem; height: 3rem;"
                         />
-                        
                       </div>
                     </div>
-                    
-                    <div class="d-flex flex-row align-items-center mb-4">
-                      <div class="form-outline flex-fill mb-0">
-                        <label class="form-label" for="repeatPassword">Repeat Password</label>
-                        <input
-                          type="password"
-                          id="repeatPassword"
-                          required="true"
-                          pattern=".{4,}"
-                          title="At least 4 characters"
-                          name="repeatPassword"
-                          class="form-control"
-                          oninput="validatePasswords()"
-                        />
-                    
-                      </div>
-                    </div>
-                    
-                    <script>
-                      function validatePasswords() {
-                        var password = document.getElementById("password").value;
-                        var repeatPassword = document.getElementById("repeatPassword").value;
-                        var repeatPasswordInput = document.getElementById("repeatPassword");
-                    
-                        if (password === repeatPassword) {
-                          repeatPasswordInput.style.border = ""; // Reset border
-                        } else {
-                          repeatPasswordInput.style.border = "1px solid red"; // Apply red border
-                        }
-                      }
-                    </script>
-                    
-                    <style>
-                      /* Additional CSS styles can be added here */
-                    </style>
-                    
+                  
                     <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                      <button type="submit" class="btn btn-primary btn-lg">Sent OTP</button>
+                      <button onclick="validate()" type="submit" class="btn btn-primary btn-lg">Sent OTP</button>
                     </div>
                   </form>
+                  <p id="err-msg" class="text-danger"></p>
   
                 </div>
                 <!-- <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
@@ -124,7 +72,6 @@
                     <img src="/images/dps.jpeg" class="styled-image" alt="Styled Image"/>
                   </div>
                 </div>
-                
               </div>
             </div>
           </div>
@@ -154,7 +101,7 @@
 function validate(){
 document.getElementById('err-msg').innerHTML = ''
 let name = document.getElementById('name').value;
-const nameRegex = /^[A-Z][a-z]*$/;
+const nameRegex = /^[A-Za-z\s'-]+$/;
 if(nameRegex.test(name)){
 }else{  
   document.getElementById('name').style.borderColor = 'red'
@@ -163,11 +110,20 @@ if(nameRegex.test(name)){
   event.preventDefault()
 }
 
-const passwordRegex = /^(?=.[A-Za-z])(?=.\d)[A-Za-z\d]{8,}$/;
+const passwordRegex = /^.{4,}$/;
 let password = document.getElementById('password').value;
 if(passwordRegex.test(password)){}else{
   document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Password error'
   document.getElementById('password').style.borderColor = 'red'
+  //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
+  event.preventDefault()
+}
+
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+let email = document.getElementById('email').value;
+if(emailRegex.test(email)){}else{
+  document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> email error'
+  document.getElementById('email').style.borderColor = 'red'
   //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
   event.preventDefault()
 }
@@ -181,7 +137,24 @@ if(phoneNumberRegex.test(number)){}else{
   //alert('Number Error')
 }
 }
+function validatePasswords() {
+  var password = document.getElementById("password").value;
+  var repeatPassword = document.getElementById("repeatPassword").value;
+  var repeatPasswordInput = document.getElementById("repeatPassword");
+  var message = document.getElementById("password-match-message");
 
+  if (password === repeatPassword && password.length >= 4) {
+    repeatPasswordInput.style.border = ""; // Reset border
+    message.textContent = "Passwords match!";
+    message.style.color = "green";
+  } else {
+    repeatPasswordInput.style.border = "1px solid red"; // Apply red border
+    message.textContent = "Passwords do not match or are too short.";
+    message.style.color = "red";
+  }
+}
+
+     
 setTimeout(() => {
   document.getElementById('passError').style.display = 'none';
    }, 3000);

@@ -30,8 +30,6 @@
                     <h2 class="content-title card-title">Products</h2>
                 </div>
                 <div>
-                    <a href="#" class="btn btn-light rounded font-md">Export</a>
-                    <a href="#" class="btn btn-light rounded  font-md">Import</a>
                     <a href="/admin/admin-add-products" class="btn btn-primary btn-sm rounded">Create new</a>
                 </div>
             </div>
@@ -48,17 +46,7 @@
                              
                             </select>
                         </div>
-                        <div class="col-md-2 col-6">
-                            <input type="date" value="02.05.2021" class="form-control">
-                        </div>
-                        <div class="col-md-2 col-6">
-                            <select class="form-select">
-                                <option selected>Status</option>
-                                <option>Active</option>
-                                <option>Disabled</option>
-                                <option>Show all</option>
-                            </select>
-                        </div>
+                     
                     </div>
                 </header> <!-- card-header end// -->
                 <div class="card-body">
@@ -75,6 +63,7 @@
                                 <th>Units</th>
                                 <th>Action</th>
                             </tr>
+                         
                             <% product.forEach(function(prod) { %>
                                 <!-- <tr></tr> -->
                             <tr>
@@ -209,18 +198,7 @@
                     
                 </div> <!-- card-body end// -->
             </div> <!-- card end// -->
-            <div class="pagination-area mt-30 mb-50">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-start">
-                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                        <li class="page-item"><a class="page-link" href="#">02</a></li>
-                        <li class="page-item"><a class="page-link" href="#">03</a></li>
-                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">16</a></li>
-                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
-                    </ul>
-                </nav>
-            </div>
+
         </section> <!-- content-main end// -->
       
     </main>

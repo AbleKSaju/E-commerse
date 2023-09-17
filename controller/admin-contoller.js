@@ -6,7 +6,9 @@ const bcrypt = require("bcrypt");
 const mongodb = require("mongodb");
 const order = require("../model/order-model");
 const { log } = require("debug/src/browser");
-const { search } = require("../routes/users");
+const { search } = require("../routes/users")
+const moment = require("moment");
+
 
 const adminLoggin = (req, res) => {
   if (req.session.adminLoggedIn == true) {
@@ -27,6 +29,138 @@ const adminIndex = (req, res) => {
     res.redirect("/admin/admin-login");
   }
 };
+
+const graph=async(req,res)=>{
+  console.log("enter");
+  try {
+    const start = moment().subtract(30, 'days').startOf('day');
+    const end = moment().endOf('day');
+
+    const orderSuccessDetails = await order.find({
+      createdOn: { $gte: start, $lte: end },
+      status: '2' 
+    });
+    const monthlySales = {}; 
+
+    orderSuccessDetails.forEach(order => {
+      const monthName = moment(order.order_date).format('MMMM');
+      if (!monthlySales[monthName]) {
+        monthlySales[monthName] = {
+          revenue: 0,
+          productCount: 0,
+          orderCount: 0,
+          codCount: 0,
+          razorpayCount: 0,
+          walletCount: 0
+        };
+      }
+      console.log("ORder: ",order)
+      monthlySales[monthName].revenue += order.totalPrice;
+      monthlySales[monthName].productCount += order.product.length;
+      monthlySales[monthName].orderCount++;
+
+      if (order.payment=== 'cod') {
+        monthlySales[monthName].codCount++;
+      } else if (order.payment === 'razorpay') {
+        monthlySales[monthName].razorpayCount++;
+      } else if (order.payment === 'wallet') {
+          monthlySales[monthName].walletCount++;
+        } 
+    });
+
+    const monthlyData = {
+      labels: [],
+      revenueData: [],
+      productCountData: [],
+      orderCountData: [],
+      codCountData: [],
+      razorpayCountData: [],
+      walletCountData: [],
+
+    };
+
+    for (const monthName in monthlySales) {
+      if (monthlySales.hasOwnProperty(monthName)) {
+        monthlyData.labels.push(monthName);
+        monthlyData.revenueData.push(monthlySales[monthName].revenue);
+        monthlyData.productCountData.push(monthlySales[monthName].productCount);
+        monthlyData.orderCountData.push(monthlySales[monthName].orderCount);
+        monthlyData.codCountData.push(monthlySales[monthName].codCount);
+        monthlyData.razorpayCountData.push(monthlySales[monthName].razorpayCount);
+        monthlyData.walletCountData.push(monthlySales[monthName].walletCount);
+      }
+    }
+    console.log(monthlyData);
+    return res.json(monthlyData);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'An error occurred while generating the monthly report.' });
+  }
+}
+
+const monthlyreport=async(req,res)=>{
+  console.log("enter");
+  try {
+    const start = moment().subtract(30, 'days').startOf('day'); // Data for the last 30 days
+    const end = moment().endOf('day');
+
+    const orderSuccessDetails = await orderModel.find({
+      createdAt: { $gte: start, $lte: end },
+      orderStatus: 'Delivered' 
+    });
+    console.log( orderSuccessDetails,"sucesssssssss")
+    const monthlySales = {}; 
+
+    orderSuccessDetails.forEach(order => {
+      const monthName = moment(order.order_date).format('MMMM');
+      if (!monthlySales[monthName]) {
+        monthlySales[monthName] = {
+          revenue: 0,
+          productCount: 0,
+          orderCount: 0,
+          codCount: 0,
+          razorpayCount: 0,
+        };
+      }
+      console.log("ORder: ",order)
+      monthlySales[monthName].revenue += order.GrandTotal;
+      monthlySales[monthName].productCount += order.items.length;
+      monthlySales[monthName].orderCount++;
+
+      if (order.payment=== 'cod') {
+        monthlySales[monthName].codCount++;
+      } else if (order.payment === 'Razorpay') {
+        monthlySales[monthName].razorpayCount++;
+      } 
+    });
+
+    const monthlyData = {
+      labels: [],
+      revenueData: [],
+      productCountData: [],
+      orderCountData: [],
+      codCountData: [],
+      razorpayCountData: [],
+    };
+
+    for (const monthName in monthlySales) {
+      if (monthlySales.hasOwnProperty(monthName)) {
+        monthlyData.labels.push(monthName);
+        monthlyData.revenueData.push(monthlySales[monthName].revenue);
+        monthlyData.productCountData.push(monthlySales[monthName].productCount);
+        monthlyData.orderCountData.push(monthlySales[monthName].orderCount);
+        monthlyData.codCountData.push(monthlySales[monthName].codCount);
+        monthlyData.razorpayCountData.push(monthlySales[monthName].razorpayCount);
+      }
+    }
+    console.log(monthlyData);
+    return res.json(monthlyData);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'An error occurred while generating the monthly report.' });
+  }
+};
+
 const loginConfirm = async (req, res) => {
   var admin = await user.find({ email: req.body.email });
   var userData = req.body;
@@ -66,11 +200,18 @@ const adminCategory = async (req, res) => {
     .find()
     .lean()
     .then((categories) => {
+      categories.reverse()
+      const itemsperpage = 4;
+      const currentpage = parseInt(req.query.page) || 1;
+      const startindex = (currentpage - 1) * itemsperpage;
+      const endindex = startindex + itemsperpage;
+      const totalpages = Math.ceil(categories.length / 4);
+      const currentproduct = categories.slice(startindex,endindex);
       res.render("admin/category", {
-        categories: categories,
-        already: req.session.Already,
+        categories: currentproduct,
+        totalpages,
+        currentpage,
       });
-      req.session.Already = false;
     })
     .catch((err) => {
       console.log(err);
@@ -83,7 +224,7 @@ const catCreation = async (req, res) => {
   await categories
     .findOne({ name: catNamePattern })
     .lean()
-    .then((data) => {
+    .then(async (data) => {
       if (!data) {
         const create = new categories({
           name: cat.name,
@@ -99,11 +240,19 @@ const catCreation = async (req, res) => {
             console.log(err);
           });
       } else {
-        req.session.Already = true;
-        res.redirect("/admin/admin-category");
+        await categories
+        .find()
+        .lean()
+        .then((categories) => {
+          res.render("admin/category", {
+            categories: categories,
+            Already:"Category Already Exist"
+
+          })
+        })
       }
     });
-};
+}
 
 const deleteCategory = async (req, res) => {
   var id = req.params.id;
@@ -170,29 +319,21 @@ const editCategory = async (req, res) => {
   }
 };
 
-const unlistCategory = (req, res) => {
-  id = req.params.id;
-  categories
+const unlistCategory =async (req, res) => {
+  id = req.query.userId;
+  await categories
     .findByIdAndUpdate(id, { verified: "1" })
-    .then((data) => {
+      var x=await product.updateMany({category:req.query.cat},{isListed:'1'},{new:true})
       res.redirect("/admin/admin-category");
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
+}
 
-const listCategory = (req, res) => {
-  id = req.params.id;
-  categories
+const listCategory =async (req, res) => {
+  id = req.query.userId;
+  await categories
     .findByIdAndUpdate(id, { verified: "0" })
-    .then((data) => {
+      var x=await product.updateMany({category:req.query.cat},{isListed:'0'},{new:true})
       res.redirect("/admin/admin-category");
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
+}
 
 // const productDisplay = async (req, res) => {
 //   await categories.find({}).then((cat) => {
@@ -218,36 +359,38 @@ const listCategory = (req, res) => {
 //   }
 //   })
 // }
+
 const productDisplay = async (req, res) => {
   try {
     const allCategories = await categories.find({}).lean();
-
-    const currentPage = parseInt(req.query.page) || 1;
-    const itemsPerPage = 8;
-
+    // const currentPage = parseInt(req.query.page) || 1;
+    // const itemsPerPage = 8;
     const search = req.query.search || '';
-
     const searchQuery = {
       $or: [
         { name: { $regex: ".*" + search + ".*", $options: 'i' } },
         { saleprice: { $regex: ".*" + search + ".*", $options: 'i' } },
       ],
     };
-
     const totalProducts = await product.countDocuments(searchQuery);
-    const totalPages = Math.ceil(totalProducts / itemsPerPage);
+    // const totalPages = Math.ceil(totalProducts / itemsPerPage);
 
     const products = await product
+
       .find(searchQuery)
-      .skip((currentPage - 1) * itemsPerPage)
-      .limit(itemsPerPage)
-      .lean();
+      products.reverse()
+      const itemsperpage = 6;
+      const currentpage = parseInt(req.query.page) || 1;
+      const startindex = (currentpage - 1) * itemsperpage;
+      const endindex = startindex + itemsperpage;
+      const totalpages = Math.ceil(products.length / 6);
+      const currentproduct = products.slice(startindex,endindex);
 
     res.render("admin/products", {
-      product: products,
+      product: currentproduct,
       cat: allCategories,
-      currentPage,
-      totalPages,
+      currentPage:currentproduct,
+      totalPages:totalpages,
     });
   } catch (error) {
     console.error(error);
@@ -263,6 +406,7 @@ const addProductPage = async (req, res) => {
 };
 
 const addProduct = async (req, res) => {
+  console.log(req.body);
   var x = req.body.size;
   var create = await new product({
     name: req.body.name,
@@ -272,6 +416,7 @@ const addProduct = async (req, res) => {
     regularprice: req.body.regularprice,
     saleprice: req.body.saleprice,
     createdon: Date.now(),
+    color:req.body.color,
     taxrate: req.body.taxrate,
     units: req.body.units,
     size: x,
@@ -324,6 +469,7 @@ const editProductPage = async (req, res) => {
 };
 
 const editProduct = async (req, res) => {
+  console.log(req.body,"bodyyyy");
   var id = req.body.id;
   var size = req.body.size;
   if (req.files != 0) {
@@ -332,12 +478,12 @@ const editProduct = async (req, res) => {
       {
         name: req.body.name,
         description: req.body.description,
-        regularprice: req.body.regularprice,
-        saleprice: req.body.saleprice,
-        units: req.body.units,
+        regularprice: req.body.Rprice,
+        saleprice: req.body.Pprice,
+        units: req.body.unit,
         taxrate: req.body.taxrate,
-        size: size,
         category: req.body.category,
+        color:req.body.color,
         subCategory:req.body.subCategory,
         image: [
           req.files[0].filename,
@@ -355,13 +501,13 @@ const editProduct = async (req, res) => {
       {
         name: req.body.name,
         description: req.body.description,
-        regularprice: req.body.regularprice,
-        saleprice: req.body.saleprice,
-        units: req.body.units,
+        regularprice: req.body.Rprice,
+        saleprice: req.body.Pprice,
+        units: req.body.unit,
         taxrate: req.body.taxrate,
-        size: size,
         category: req.body.category,
-        subCategory: req.body.subCategory,
+        color:req.body.color,
+        subCategory:req.body.subCategory,
       },
       { new: true }
     );
@@ -374,7 +520,13 @@ const users = (req, res) => {
     .find({ isadmin: "0" })
     .lean()
     .then((data) => {
-      res.render("admin/users", { user: data });
+      const itemsperpage = 5;
+      const currentpage = parseInt(req.query.page) || 1;
+      const startindex = (currentpage - 1) * itemsperpage;
+      const endindex = startindex + itemsperpage;
+      const totalpages = Math.ceil(data.length / 5);
+      const user = data.slice(startindex,endindex);
+      res.render("admin/users", { user ,totalpages,currentpage});
     })
     .catch((err) => {
       console.log(err);
@@ -409,17 +561,48 @@ const listUser = async (req, res) => {
   });
 };
 
+
+// const orders = async (req, res) => {
+//   await order
+//     .find()
+//     .lean().sort({createdOn:-1})
+//     .then((data) => {
+//       res.render("admin/orders", { data: data });
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
+// };
 const orders = async (req, res) => {
-  await order
-    .find()
-    .lean().sort({createdOn:-1})
-    .then((data) => {
-      res.render("admin/orders", { data: data });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  try {
+    const currentPage = parseInt(req.query.page) || 1;
+    const itemsPerPage = 20;
+    const search = req.query.search || '';
+    const searchQuery = {
+      $or: [
+        { "address.number": { $regex: ".*" + search + ".*", $options: 'i' } },
+        { "address.name": { $regex: ".*" + search + ".*", $options: 'i' } },
+      ],
+    };
+    const totalProducts = await order.countDocuments(searchQuery);
+    const totalPages = Math.ceil(totalProducts / itemsPerPage);
+    console.log(totalProducts, "totalProducts");
+    console.log(totalPages);
+
+    const data = await order
+      .find(searchQuery)
+      .skip((currentPage - 1) * itemsPerPage)
+      .limit(itemsPerPage)
+      .sort({ createdOn: -1 })
+      .lean();
+
+    res.render("admin/orders", { data, currentPage, totalPages, search });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error'); // Handle the error appropriately
+  }
 };
+
 
 const cancelOrder = async (req, res) => {
   await order
@@ -458,7 +641,9 @@ const approved = async (req, res) => {
 }
 
 const orderDetails = async (req, res) => {
+  console.log(req.query,"qrty");
   var orderId = req.query.id;
+  console.log(orderId,"oid");
   var oid = new mongodb.ObjectId(orderId);
   var Details = await order.aggregate([
     { $match: { _id: oid } },
@@ -506,6 +691,25 @@ const delivered = async (req, res) => {
     });
 };
 
+const orderStatus=async (req,res)=>{
+  console.log(req.query.status);
+  if(req.query.status=="all"){
+     res.redirect('/admin/admin-orders')
+  }else{
+      var data=await order.find({status:req.query.status}).lean()
+  }
+      res.render('admin/orders',{data:data})  
+}
+
+const changeStatus=async(req,res)=>{
+  console.log(req.query);
+  await order.findByIdAndUpdate(req.query.id,{$set:{status:req.query.status}}).lean()
+  .then((data)=>{
+    console.log(data);
+    res.redirect(`/admin/details?id=${req.query.id}`)
+  })
+}
+
 const logOut = (req, res) => {
   req.session.adminLoggedIn = null;
   req.session.emilErr = false;
@@ -514,7 +718,9 @@ const logOut = (req, res) => {
 
 module.exports = {
   adminLoggin,
+  monthlyreport,
   adminIndex,
+  graph,
   loginConfirm,
   dashboard,
   orders,
@@ -542,4 +748,6 @@ module.exports = {
   logOut,
   unlistUser,
   listUser,
+  changeStatus,
+  orderStatus
 };
