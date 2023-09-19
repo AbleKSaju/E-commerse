@@ -58,33 +58,7 @@ router.get('/subCategory/:cat',productController.subCategory)
 
 router.get("/product-display",auth.isLogged,productController.productDetails);
 
-router.get("/color",async(req,res)=>{
-                const banners = await banner.find({ location: "Products" }).lean();
-                var datas = await categories.find().lean()
-                await product
-                      .find({ color: req.query.id ,isListed: '0' })
-                      .lean()
-                      .then((data) => {
-                        data.reverse();
-                        const itemsperpage = 6;
-                        const currentpage = parseInt(req.query.page) || 1;
-                        const startindex = (currentpage - 1) * itemsperpage;
-                        const endindex = startindex + itemsperpage
-                        const totalpages = Math.ceil(data.length / 6);
-                        const currentproduct = data.slice(startindex,endindex);
-                        res.render("user/products", {
-                          data:datas,
-                          products: currentproduct,
-                          isLoggedIn: req.session.user,
-                          totalPages:totalpages,
-                          currentPage:currentpage,
-                          banner: banners,
-                        });
-                      })
-                      .catch((err) => {
-                        console.log(err);
-                      });
-                  });
+router.get("/color",productController.colorWise);
          
 
 

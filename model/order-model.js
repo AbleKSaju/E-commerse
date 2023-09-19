@@ -26,6 +26,10 @@ const orderModal=mongoose.Schema({
         require:true,
         type:Array
     },
+    wallet:{
+        default:0,
+        type:Number
+    },
     reason:{
         type:String,
         default:0

@@ -30,8 +30,11 @@
                     </div>
                     <h6 class="text-success">Free shipping</h6>
                     <div class="d-flex flex-column mt-4">
-                    <a href="/product-display?id=<%= data[i].proId %>"><button class="btn btn-primary btn-sm" type="button">Details</button></a>
-                   <button onclick="addtoCart('<%= data[i].proId %>')" class="btn btn-outline-primary btn-sm mt-2 " type="button">Add to cart</button></a>
+                        <a href="/product-display?id=<%= data[i].proId %>" class="center-link">
+                            <button class="btn btn-primary btn-sm" type="button">Details</button>
+                          </a>
+
+                   <button onclick="addtoCart('<%= data[i].proId %>')" class="btn btn-outline-primary btn-sm" type="button">Add to cart</button></a>
                 </div>
                 </div>
             </div>
@@ -48,7 +51,6 @@
 </div>
 <style>
     body{background:#eee}.ratings i{font-size: 16px;color: red}.strike-text{color: red;text-decoration: line-through}.product-image{width: 100%}.dot{height: 7px;width: 7px;margin-left: 6px;margin-right: 6px;margin-top: 3px;background-color: blue;border-radius: 50%;display: inline-block}.spec-1{color: #938787;font-size: 15px}h5{font-weight: 400}.para{font-size: 16px}
-
 </style>
 <script>
      function addtoCart(proId){
@@ -91,3 +93,14 @@
                                        }
 
 </script>
+<style>
+    .center-link {
+display: flex;
+justify-content: center;
+align-items: center;
+text-align: center;
+text-decoration: none; /* Optional, remove underlines from the link */
+height: 100%; /* Optional, set a specific height if needed */
+}
+
+  </style>

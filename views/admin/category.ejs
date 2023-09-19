@@ -70,7 +70,7 @@
                                             <th>Image</th>
                                             <th>Name</th>
                                             <th>Description</th>
-                                            <th></th>
+                                            <th>Status</th>
                                             <th class="text-end">Action</th>
                                         </tr>
                                     </thead>
@@ -101,11 +101,6 @@
                                                         <a href="/admin/edit-category/<%= user._id %>"
                                                             class="btn btn-outline-success"
                                                          >Edit</a>
-
-                                                        <a href="/admin/delete-category/<%= user._id %>"
-                                                            class="btn btn-outline-danger"
-                                                            onclick="return confirm('are you sure to Delete <%= user.name %> ?')"
-                                                         >Delete</a>
                                                          <%if(user.verified==0){%>
                                                             <a href="/admin/unlist-category?userId=<%= encodeURIComponent(user._id) %>&cat=<%= encodeURIComponent(user.name) %>"
 

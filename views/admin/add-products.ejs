@@ -174,12 +174,44 @@
     const allowedExtensions = /(\.jpg|\.jpeg|\.webp|\.png|\.gif)$/i; 
     const file = input.files[0]; // Get the selected file
     if (!allowedExtensions.test(file.name)) {
-        alert("Please select a valid image file (jpg, jpeg, png, gif).");
-        input.value = ""; 
+        alert("Please select a valid image file (jpg, jpeg, webp, png, gif).");
+        input.value = "";
     }
 }
 
 function validated(){
+        var regularPrice = parseInt(document.getElementById("Rprice").value);
+        var salePrice = parseInt(document.getElementById("Pprice").value);
+        if (regularPrice < salePrice) {     
+        document.getElementById('Rprice').style.borderColor = 'red'     
+        document.getElementById('Pprice').style.borderColor = 'red'     
+        document.getElementById('err-msg').textContent = 'No';
+         event.preventDefault()
+    }else{
+        const RpriceRegex =/^[1-9][0-9]*$/
+
+
+let Rprice = document.getElementById('Rprice').value;
+if(RpriceRegex.test(Rprice)){
+  document.getElementById('Rprice').style.borderColor = 'white'
+}else{
+  document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Regular Price error'
+  document.getElementById('Rprice').style.borderColor = 'red'
+  event.preventDefault() 
+}
+
+const PpriceRegex = /^[1-9][0-9]*$/
+
+
+let Pprice = document.getElementById('Pprice').value;
+if(RpriceRegex.test(Pprice)){
+  document.getElementById('Pprice').style.borderColor = 'white'
+}else{
+document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Promotional Price error'
+document.getElementById('Pprice').style.borderColor = 'red'
+event.preventDefault()
+}
+    }
      document.getElementById('err-msg').innerHTML = ''
         let name = document.getElementById('name').value;
         const nameRegex = /^[A-Za-z0-9\s'-.]+$/
@@ -192,29 +224,7 @@ function validated(){
           event.preventDefault()
         }
         
-        const RpriceRegex =/^[1-9][0-9]*$/
-
-
-        let Rprice = document.getElementById('Rprice').value;
-        if(RpriceRegex.test(Rprice)){
-          document.getElementById('Rprice').style.borderColor = 'white'
-        }else{
-          document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Regular Price error'
-          document.getElementById('Rprice').style.borderColor = 'red'
-          event.preventDefault() 
-        }
-
-        const PpriceRegex = /^[1-9][0-9]*$/
-
-
-        let Pprice = document.getElementById('Pprice').value;
-        if(RpriceRegex.test(Pprice)){
-          document.getElementById('Pprice').style.borderColor = 'white'
-        }else{
-        document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Promotional Price error'
-        document.getElementById('Pprice').style.borderColor = 'red'
-        event.preventDefault()
-        }
+       
 
         const unitRegex = /^\d+$/;
 

@@ -265,50 +265,6 @@ body {
                             Select Address
                         </h1>
                         <a href="/add-address" class="btn btn-info" style="margin-left: 85%;">Add Address</a>
-                        <!-- <div class="row gy-3 mb-4">
-                            <div class="col-lg-5">
-                                <div class="me-lg-5">
-                                    <div class="d-flex">
-                                        <img src="/upload/product"
-                                            class="border rounded me-3" style="width: 96px; height: 96px;" />
-                                        <div class="">
-                                            <a href="#" class="nav-link">Name</a>
-                                            <p class="text-muted">Yellow, Jeans</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                                <div class="col-md-4 col-6 mb-3">
-                                    <label class="mb-2 d-block">Quantity</label>
-                                    <div class="input-group mb-3" style="width: 170px;">
-                                    <button class="btn btn-white border border-secondary px-3" type="button" id="decrementButton" data-mdb-ripple-color="dark"">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
-                                    <input name="quantity" type="text" class="form-control text-center border border-secondary"  aria-label="Example text with button addon" aria-describedby="decrementButton" />
-                                    <button class="btn btn-white border border-secondary px-3" type="button" id="incrementButton" data-mdb-ripple-color="dark">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
-                                    </div>
-                                    <div class="mt-4">
-                                        <p>Size:</p>
-                                    </div>
-                                </div>
-
-                            <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
-                                <div class="">
-                                    <text class="h6">$1156.00</text> <br />
-                                    <small class="text-muted text-nowrap"> 100 / per item </small>
-                                </div>
-                            </div>
-                            <div
-                                class="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
-                                <div class="float-md-end">
-                                    <a href="#!" class="btn btn-light border px-2 icon-hover-primary"><i
-                                            class="fas fa-heart fa-lg px-1 text-secondary"></i></a>
-                                    <a href="#" class="btn btn-light border text-danger icon-hover-danger"> Remove</a>
-                                </div>
-                            </div>
-                        </div> -->
 
                         <form class="boxed" action="/buy-now" method="post">
                             <%for(i=0;i<userData.address.length;i++){%>
@@ -526,6 +482,7 @@ body {
                             <button onclick="wallet()" id="walletButton" class="btn btn-light w-100 border mt-2"> Use wallet </button>
                               <%}%>
                             <a href="/show-products" class="btn btn-light w-100 border mt-2"> Back to shop </a>
+                            <input type="hidden" id="walletAdded" value="0">
                         </div>
                     </div>
                 </div>
@@ -610,6 +567,7 @@ function wallet(){
                     '<i class="fa fa-wallet"></i> Use wallet!',
             }).then((result)=>{
                 if(result.isConfirmed){
+                  document.getElementById('walletAdded').value='<%=userData.wallet%>'
                     const gt = parseInt(document.getElementById('gt').innerHTML);
                     const discount = parseInt(document.getElementById('discount').innerHTML);
                     if(gt<parseInt('<%=userData.wallet%>')){
@@ -655,16 +613,19 @@ function makePurchase(total, user, status) {
     var wallet=document.getElementById('walletPrice').innerHTML
     var address = $('.address:checked').val();
     var payment = $('.payment:checked').val();
+    var addWallet = document.getElementById('walletAdded').value
+    alert(addWallet)
     var data = {
         userId: user,
         totalPrice,
         addressId: address,
         payment,
-        wallet
+        wallet,
+        addWallet
     };
     if (status) {
         data.proId = proId;
-        data.quantity = quantity;
+        data.quantity = quantity; 
         data.size = size;
     }
     $.ajax({

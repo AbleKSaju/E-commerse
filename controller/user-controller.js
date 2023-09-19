@@ -7,11 +7,9 @@ const mongodb = require("mongodb");
 const order = require("../model/order-model");
 const coupon = require("../model/coupon-model");
 const { log } = require("debug/src/browser");
-const easyinvoice = require('easyinvoice');
-const { Readable } = require("stream");
 const banner = require("../model/banner-model");
 const Razorpay = require("razorpay");
-const invoice=require("../middlewares/invoice")
+const invoice = require("../middlewares/invoice");
 require("dotenv").config();
 
 var instance = new Razorpay({
@@ -24,10 +22,25 @@ const index = async (req, res) => {
     if (req.query.id) {
       console.log("wallet");
       await user.findByIdAndUpdate(req.query.id, { $inc: { wallet: 200 } });
-      await user.findByIdAndUpdate(req.query.id,{$push:{'history':{amount:200,status:'debit',date:Date.now()}}},{new:true})
+      await user.findByIdAndUpdate(
+        req.query.id,
+        {
+          $push: {
+            history: { amount: 200, status: "debit", date: Date.now() },
+          },
+        },
+        { new: true }
+      );
       await user.findByIdAndUpdate(req.session.user, { $inc: { wallet: 200 } });
-      await user.findByIdAndUpdate(req.session.user,{$push:{'history':{amount:200,status:'debit',date:Date.now()}}},{new:true})
-
+      await user.findByIdAndUpdate(
+        req.session.user,
+        {
+          $push: {
+            history: { amount: 200, status: "debit", date: Date.now() },
+          },
+        },
+        { new: true }
+      );
     }
     // if(req.session.refralUser){
     //   await user.findByIdAndUpdate(req.session.refralUser,{$inc:{wallet:200}})
@@ -40,11 +53,11 @@ const index = async (req, res) => {
       isLoggedIn: req.session.user,
       banner: banners,
       products,
-    })
+    });
   } catch (error) {
     console.log(error);
   }
-}
+};
 
 const login = (req, res) => {
   if (req.session.user) {
@@ -60,7 +73,7 @@ const verifyLoggin = async (req, res) => {
     const userExist = await user.findOne({
       email: userData.email,
       verified: 0,
-    })
+    });
     if (!userExist) {
       return res.render("user/login", {
         email: "Email Error",
@@ -283,11 +296,12 @@ const loginOtpConfirm = async (req, res) => {
 // }
 
 const makePurchase = async (req, res) => {
+  console.log("ent");
   if (!req.body.addressId) {
     res.json({ status: false });
-  }else if(req.body.payment =='paypal'){
-    return res.json({status:false})
-  }else {
+  } else if (req.body.payment == "paypal") {
+    return res.json({ status: false });
+  } else {
     var productUnit = true;
     var orderId;
     var totalPrice = parseInt(req.body.totalPrice);
@@ -324,6 +338,7 @@ const makePurchase = async (req, res) => {
             size: req.body.size,
           },
         ];
+        console.log(req.body);
         var quantity = data[0].cart.map((product) => product.quantity);
         var newOrder = await new order({
           address: data[0].address,
@@ -334,7 +349,11 @@ const makePurchase = async (req, res) => {
           payment: req.body.payment,
           status: 0,
         });
+        if (req.body.addWallet) {
+          newOrder.wallet = req.body.addWallet;
+        }
         const orderData = await newOrder.save();
+        console.log(orderData, "od");
 
         orderId = orderData._id;
       }
@@ -365,9 +384,12 @@ const makePurchase = async (req, res) => {
           payment: req.body.payment,
           status: 0,
         });
-
+        if (req.body.addWallet) {
+          newOrder.wallet = req.body.addWallet;
+        }
         try {
           const orderData = await newOrder.save();
+          console.log(orderData, "odataaaaa>>>>>>>");
 
           orderId = orderData._id;
           await user.findByIdAndUpdate(
@@ -385,20 +407,8 @@ const makePurchase = async (req, res) => {
       await user.findByIdAndUpdate(req.session.user, { wallet: 0 });
     }
     if (req.body.payment == "cod" && productUnit === true) {
-      //const usr=await user.findOne({_id:req.session.user}).lean()
-      //const invoiceSent = await invoice.generateAndSendInvoice(req,res,orderId, usr.email);
-      // console.log(invoiceSent,"ins");
-      // if (invoiceSent) {
-      //   console.log("1");
-        res.json({ status: "cod" });
-      // } else {
-      //   console.log("2");
-      //   res.status(500).json({ message: 'Internal server error' });
-      // }
-
+      res.json({ status: "cod" });
     } else if (req.body.payment == "razorpay" && productUnit === true) {
-      //const usr=await user.findOne({_id:req.session.user}).lean()
-      //invoice.generateAndSendInvoice(req,res,orderId,usr.email)
       console.log("hiii");
       instance.orders
         .create({
@@ -410,17 +420,23 @@ const makePurchase = async (req, res) => {
           res.json({ status: "razorpay", order: response, id: orderId });
         });
     } else if (req.body.payment == "wallet" && productUnit === true) {
-      var amount=-req.body.totalPrice
-      await user.findByIdAndUpdate(req.session.user,{$push:{'history':{amount:amount,status:'debit',date:Date.now()}}},{new:true})
+      var amount = -req.body.totalPrice;
+      await user.findByIdAndUpdate(
+        req.session.user,
+        {
+          $push: {
+            history: { amount: amount, status: "debit", date: Date.now() },
+          },
+        },
+        { new: true }
+      );
       await user.findByIdAndUpdate(
         { _id: req.session.user },
         { $inc: { wallet: -req.body.totalPrice } }
       );
-      //const usr=await user.findOne({_id:req.session.user}).lean()
-      // invoice.generateAndSendInvoice(req,res,orderId,usr.email)
-      res.json({ status: "wallet" })
+      res.json({ status: "wallet" });
     } else if (productUnit == false) {
-      res.json({ status: "outOfStock" })
+      res.json({ status: "outOfStock" });
     } else {
       res.json({ status: false });
     }
@@ -460,7 +476,7 @@ const makePurchase = async (req, res) => {
               await productToUpdate.save();
               console.log(
                 `Product with ID ${productId} updated. New units: ${newUnits}`
-              )
+              );
             }
           }
         } catch (err) {
@@ -481,7 +497,7 @@ const applyCoupon = async (req, res) => {
       return res.status(404).json({ message: "Coupon not found" });
     }
     offerPrice = parseInt(offer.offerPrice);
-    console.log(req.body);
+    console.log(req.body, "coupons");
     await coupon.findOneAndUpdate(
       { name: req.body.coupon },
       { $push: { user: req.session.user } }
@@ -495,34 +511,9 @@ const applyCoupon = async (req, res) => {
 
 const orderPage = async (req, res) => {
   try {
-    req.body
-    var orderDetails = await order.find({userId:req.session.user}).lean()
-    // await order.aggregate([
-    //   { $match: { userId: req.session.user } },
-    //   { $unwind: "$product" },
-    //   {
-    //     $project: {
-    //       proId: { $toObjectId: "$product.productId" },
-    //       quantity: "$product.quantity",
-    //       size: "$product.size",
-    //       address: "$address",
-    //       status: "$status",
-    //       payment: "$payment",
-    //       date: "$date",
-    //       totalPrice: "$totalPrice",
-    //     },
-    //   },
-    //   {
-    //     $lookup: {
-    //       from: "products",
-    //       localField: "proId",
-    //       foreignField: "_id",
-    //       as: "orderDetails",
-    //     },
-    //   },
-    // ]);
+    req.body;
+    var orderDetails = await order.find({ userId: req.session.user }).lean();
     orderDetails.reverse();
-    console.log(orderDetails,"od");
     await user
       .findOne({ _id: req.session.user })
       .lean()
@@ -532,7 +523,7 @@ const orderPage = async (req, res) => {
         const startindex = (currentpage - 1) * itemsperpage;
         const endindex = startindex + itemsperpage;
         const totalpages = Math.ceil(orderDetails.length / 10);
-        const currentproduct = orderDetails.slice(startindex,endindex);
+        const currentproduct = orderDetails.slice(startindex, endindex);
         res.render("user/order", {
           order: currentproduct,
           data: data,
@@ -546,48 +537,80 @@ const orderPage = async (req, res) => {
   }
 };
 
-const orderDetails=async(req,res)=>{
-  await order.findOne({_id:req.query.id}).lean()
-  .then(async(data)=>{
-          let oid=new mongodb.ObjectId(req.query.id) 
-          let productDetails= await order.aggregate([
-                  {$match:{_id:oid}},
-                  {$unwind:'$product'},
-                  {$project:{
-                          proId:{$toObjectId:'$product.productId'},
-                          quantity:'$product.quantity',
-                          totalPrice:'$totalPrice'  
-                      }},
-                      {$lookup:{
-                          from:'products',
-                          localField:'proId',
-                          foreignField:'_id',
-                          as:'ProductDetails'
-                      }}
-          ])
-      res.render('user/order-details',{orders:data,productDetails,isLoggedIn:req.session.user})
-  })
-}
+const orderDetails = async (req, res) => {
+  await order
+    .findOne({ _id: req.query.id })
+    .lean()
+    .then(async (data) => {
+      let oid = new mongodb.ObjectId(req.query.id);
+      let productDetails = await order.aggregate([
+        { $match: { _id: oid } },
+        { $unwind: "$product" },
+        {
+          $project: {
+            proId: { $toObjectId: "$product.productId" },
+            quantity: "$product.quantity",
+            totalPrice: "$totalPrice",
+          },
+        },
+        {
+          $lookup: {
+            from: "products",
+            localField: "proId",
+            foreignField: "_id",
+            as: "ProductDetails",
+          },
+        },
+      ]);
+      res.render("user/order-details", {
+        orders: data,
+        productDetails,
+        isLoggedIn: req.session.user,
+      });
+    });
+};
 
 // const orderDetails = async (req, res) => {
-  // await order
-  //   .findById(req.body.oid)
-  //   .lean()
-  //   .then((data) => {
-  //     if (data) {
-  //       res.json({ status: data });
-  //     } else {
-  //       res.status(404).json({ error: "Order not found" });
-  //     }
-  //   })
-  //   .catch((err) => {
-  //     res.status(500).json({ error: "Internal server error" });
-  //   });
+// await order
+//   .findById(req.body.oid)
+//   .lean()
+//   .then((data) => {
+//     if (data) {
+//       res.json({ status: data });
+//     } else {
+//       res.status(404).json({ error: "Order not found" });
+//     }
+//   })
+//   .catch((err) => {
+//     res.status(500).json({ error: "Internal server error" });
+//   });
 //};
 
+// const cancelOrder = async (req, res) => {
+//   console.log("ent");
+//   console.log(req.body)
+//   try {
+//     if (req.body.payment == "wallet" || req.body.payment == "razorpay") {
+//       await user.findByIdAndUpdate(req.session.user, {
+//         $inc: { wallet: req.body.totalPrice },
+//       })
+//     }
+//     await order.updateOne({ _id: req.body.orderId }, { status: "-1" })
+//     await order
+//       .find({ _id: req.body.orderId })
+//       .lean()
+//       .then((data) => {
+//         console.log(data);
+//         product.findByIdAndUpdate(data.product[i].productId,{$inc:{units:data.product[i].quantity}})
+//       })
+//     res.json({ status: true });
+//   } catch (err) {
+//     console.error(err, "err");
+//     res.json({ status: false });
+//   }
+// };
+
 const cancelOrder = async (req, res) => {
-  console.log(req.body, "by");
-  let oid = new mongodb.ObjectId(req.body.id);
   try {
     if (req.body.payment == "wallet" || req.body.payment == "razorpay") {
       await user.findByIdAndUpdate(req.session.user, {
@@ -595,17 +618,14 @@ const cancelOrder = async (req, res) => {
       });
     }
     await order.updateOne({ _id: req.body.orderId }, { status: "-1" });
-    await order
-      .find({ _id: req.body.orderId })
-      .lean()
-      .then((data) => {
-        user.findByIdAndUpdate({});
+    const orderData = await order.findById(req.body.orderId).lean();
+
+    for (let i = 0; i < orderData.product.length; i++) {
+      await product.findByIdAndUpdate(orderData.product[i].productId, {
+        $inc: { units: orderData.product[i].quantity },
       });
-    const unitsToIncrement = parseInt(req.body.units);
-    await product.updateOne(
-      { _id: oid },
-      { $inc: { units: unitsToIncrement } }
-    );
+    }
+
     res.json({ status: true });
   } catch (err) {
     console.error(err, "err");
@@ -632,9 +652,9 @@ const wishList = async (req, res) => {
         as: "wishlist",
       },
     },
-  ]);
+  ])
   res.render("user/wishlist", { isLoggedIn: req.session.user, data: wishList });
-};
+}
 
 const addToWishList = async (req, res) => {
   try {
@@ -672,18 +692,26 @@ const removeWishList = async (req, res) => {
 
 const addMoney = (req, res) => {
   try {
-    var options ={
+    var options = {
       amount: req.body.total * 100,
       currency: "INR",
       receipt: "" + Date.now(),
     };
-    instance.orders.create(options,async function(err, order) {
+    instance.orders.create(options, async function (err, order) {
       if (err) {
         console.log("Error while creating order : ", err);
       } else {
-        var amount=order.amount/100;
+        var amount = order.amount / 100;
         console.log(amount);
-        var x=await user.findByIdAndUpdate(req.session.user,{$push:{'history':{amount:amount,status:'credit',date:Date.now()}}},{new:true})
+        var x = await user.findByIdAndUpdate(
+          req.session.user,
+          {
+            $push: {
+              history: { amount: amount, status: "credit", date: Date.now() },
+            },
+          },
+          { new: true }
+        );
         res.json({ order: order, razorpay: true });
       }
     });
@@ -743,44 +771,43 @@ const confirmAddress = async (req, res) => {
       res.redirect("/account");
     });
 };
-const editAddress=async (req, res) => {
+const editAddress = async (req, res) => {
   try {
     const usr = await user.findOne({ _id: req.session.user });
-    const addr = usr.address.find(address => address._id == req.query.id);
-    res.render('user/edit-address', { address: addr ,id:req.query.id});
+    const addr = usr.address.find((address) => address._id == req.query.id);
+    res.render("user/edit-address", { address: addr, id: req.query.id });
   } catch (error) {
-    console.error("Error fetching user data:", error)
-    res.status(500).send("Internal Server Error")
+    console.error("Error fetching user data:", error);
+    res.status(500).send("Internal Server Error");
   }
-}
+};
 
-const editedAddress=async(req,res)=>{
-  console.log(req.body.id)
-  req.body.id= parseInt(req.body.id)
-  console.log(req.session.user)
+const editedAddress = async (req, res) => {
+  console.log(req.body.id);
+  req.body.id = parseInt(req.body.id);
+  console.log(req.session.user);
   const edited = await user.updateOne(
-          {
-            _id: req.session.user,
-            "address._id": req.body.id
-          },
-          {
-            $set: {
-              "address.$.name": req.body.name,
-              "address.$.number": req.body.number,
-              "address.$.altNumber": req.body.altNumber,
-              "address.$.pinCode": req.body.pinCode,
-              "address.$.house": req.body.house,
-              "address.$.area":req.body.area,
-              "address.$.landmark": req.body.landmark,
-              "address.$.town": req.body.town,
-              "address.$.state": req.body.state,
-            }
-          }
-          
-  )
-  console.log(edited,"edd");
-  res.redirect('/account')
-}
+    {
+      _id: req.session.user,
+      "address._id": req.body.id,
+    },
+    {
+      $set: {
+        "address.$.name": req.body.name,
+        "address.$.number": req.body.number,
+        "address.$.altNumber": req.body.altNumber,
+        "address.$.pinCode": req.body.pinCode,
+        "address.$.house": req.body.house,
+        "address.$.area": req.body.area,
+        "address.$.landmark": req.body.landmark,
+        "address.$.town": req.body.town,
+        "address.$.state": req.body.state,
+      },
+    }
+  );
+  console.log(edited, "edd");
+  res.redirect("/account");
+};
 
 const removeAddress = async (req, res) => {
   id = req.session.user;
@@ -794,7 +821,6 @@ const removeAddress = async (req, res) => {
       json(false);
     });
 };
-
 
 const editProfile = async (req, res) => {
   await user
@@ -849,8 +875,8 @@ const history = async (req, res) => {
   const startindex = (currentpage - 1) * itemsperpage;
   const endindex = startindex + itemsperpage;
   const totalpages = Math.ceil(formattedHistory.length / 15);
-  const currentHistory = formattedHistory.slice(startindex,endindex);
-  res.render('user/show-history', {
+  const currentHistory = formattedHistory.slice(startindex, endindex);
+  res.render("user/show-history", {
     isLoggedIn: req.session.user,
     history: currentHistory,
     currentpage,
@@ -966,6 +992,5 @@ module.exports = {
   removeWishList,
   logOut,
   editProfile,
-  history
+  history,
 };
-

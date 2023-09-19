@@ -13,6 +13,16 @@ const isLogged=((req,res,next)=>{
         res.redirect('/')
     }
 })
+
+const adminLoggedIn=((req,res,next)=>{
+    if(req.session.adminLoggedIn==true ){
+        next()
+    }else{
+        res.redirect('/admin/admin-login')
+    }
+})
+
 module.exports={
     isLogged,
+    adminLoggedIn
 }

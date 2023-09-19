@@ -40,23 +40,29 @@
                             <form method="post" action="/admin/coupon">
                                 <div class="mb-4">
                                       <br>
-                                    <label for="product_name"  class="form-label">Name</label>
-                                    <input type="text" name="name" placeholder="Type here" maxlength="20" class="form-control" id="name" /><br>
-                                    <label for="product_name"  class="form-label">Start Date</label>
-                                    <input type="date" name="startDate" class="form-control" required="true" id="startingDate" /><br>
-                                    <label for="product_name"  class="form-label" onchange="validates()">End Date</label>
-                                    <input type="date" name="endDate" class="form-control" id="exipiringDate" required="true"/><br>
-                                    <label for="product_name"  class="form-label" onchange="validates()">Offer Price</label>
-                                    <input type="text" name="offerPrice" placeholder="Type here" maxlength="20" class="form-control" id="offerPrice" /><br>
-                                    <label for="product_name"  class="form-label">Minimum Price</label>
-                                    <input type="text" name="minimumPrice" placeholder="Type here" maxlength="20" class="form-control" id="minimumPrice" /><br>
+                                      <body onload="setDefaultStartDate()">
+                                        <label for="product_name" class="form-label">Name</label>
+                                        <input type="text" name="name" placeholder="Type here" maxlength="20" class="form-control" id="name" /><br>
+                                    
+                                        <label for="product_name" class="form-label">Start Date</label>
+                                        <input type="date" name="startDate" class="form-control" required="true" id="startingDate" /><br>
+                                    
+                                        <label for="product_name" class="form-label">End Date</label>
+                                        <input type="date" name="endDate" class="form-control" id="expiringDate" required="true" /><br>
+                                    
+                                        <label for="product_name" class="form-label">Offer Price</label>
+                                        <input type="text" name="offerPrice" placeholder="Type here" maxlength="20" class="form-control" id="offerPrice" /><br>
+                                    
+                                        <label for="product_name" class="form-label">Minimum Price</label>
+                                        <input type="text" name="minimumPrice" placeholder="Type here" maxlength="20" class="form-control" id="minimumPrice" /><br>
+                                    
+                                        <p id="err-msg" class="text-danger"></p>
+                                        <button class="btn btn-primary" type="submit" onclick="validate(event)">Create Coupon</button>
+                                    </body>
+                                    
                                 </div>
 
                                 <!-- <p id="msg" class="text-danger"></p> -->
-                                <p id="err-msg" class="text-danger"></p>
-                                <div class="d-grid">
-                                    <button class="btn btn-primary" type="submit" onclick="validate()">Create Coupon</button>
-                                </div>
                             </form>
                         </div>
                         <div class="col-md-9">
@@ -91,6 +97,11 @@
                                                   <button onclick="couponStatus('<%= coupon._id %>', 1)" class="btn btn-outline-danger">Unlisted</button>
                                                   <span id="status_<%= coupon._id %>"></span>
                                                 </td>
+                                              <% }else if (coupon.status == 2) { %>
+                                                <td>
+                                                  <button class="btn btn-outline-danger" disabled>Expired</button>
+                                                  <span id="status_<%= coupon._id %>"></span>
+                                                </td>
                                               <% } else { %>
                                                 <td>
                                                   <button class="btn btn-warning">Expired</button>
@@ -102,6 +113,21 @@
                                         <%}%>
                                     </tbody>
                                 </table>
+                                <% if (totalpages) { %>
+                                    <div class="pagination">
+                                      <% if (currentpage > 1) { %>
+                                        <button><a href="?page=<%= currentpage - 1 %>">Previous</a></button>
+                                      <% } %>
+                                  
+                                      <% for (let i = 1; i <= totalpages; i++) { %> <!-- Change the loop to start from 1 and go up to totalpages -->
+                                        <button><a href="?page=<%= i %>" class="<%= i === currentpage ? 'active' : '' %>"><%= i %></a></button>
+                                      <% } %>
+                                  
+                                      <% if (currentpage < totalpages) { %>
+                                        <button><a href="?page=<%= currentpage + 1 %>">Next</a></button>
+                                      <% } %>
+                                    </div>
+                                  <% } %> 
                             </div>
                         </div> <!-- .col// -->
                     </div> <!-- .row // -->
@@ -109,6 +135,7 @@
             </div> <!-- card .// -->
         </section> <!-- content-main end// -->
     </main>
+    
     <script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
     <script src="/assets/js/vendors/select2.min.js"></script>
@@ -116,6 +143,38 @@
     <script src="/assets/js/vendors/jquery.fullscreen.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 
+    <style>
+        .table-spacing th,
+        .table-spacing td {
+            padding-left: 80px; /* Adjust the value as needed for the desired spacing */
+        }
+        .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    }
+    
+    .pagination button {
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    padding: 6px 12px;
+    margin: 0 3px;
+    cursor: pointer;
+    
+    transition: background-color 0.3s, color 0.3s;
+    }
+    
+    .pagination button.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+    }
+    
+    .pagination button:hover {
+    background-color: #ddd;
+    }
+</style>
     <script>
 
         function couponStatus(id,status){
@@ -140,22 +199,6 @@ const startingDateInput = document.getElementById("startingDate");
     const todayDate = new Date().toISOString().slice(0, 10);
     document.getElementById('startingDate').value = todayDate
     const todayDateObj = new Date(todayDate)
-    function validates(){
-        alert("ent")
-        // document.getElementById('msg').innerHTML = ''
-        const sDate = document.getElementById('startingDate').value
-        const eDate = document.getElementById('exipiringDate').value
-        const sDateObj = new Date(sDate);
-        const eDateObj = new Date(eDate)
-        if (sDateObj > eDateObj){
-            document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Expiry date Error'
-            event.preventDefault()
-        }
-        if(sDateObj<todayDateObj){
-            document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Starting date should be above todays date'
-            event.preventDefault()
-        }
-    }
 
        setTimeout(() => {
         document.getElementById('exist').style.display='none'
@@ -165,48 +208,53 @@ const startingDateInput = document.getElementById("startingDate");
     <script src="/assets/js/main.js" type="text/javascript"></script>
 
     <script>
-        function validate(){
-            document.getElementById('err-msg').innerHTML = ''
-            let name = document.getElementById('name').value;
-            const nameRegex = /^[A-Za-z0-9]{1,50}$/;
-    
-            if(nameRegex.test(name)){
-                document.getElementById('name').style.borderColor = 'white'
-            }else{  
-              document.getElementById('name').style.borderColor = 'red'
-              document.getElementById('name').style.borderWidth = '1px'
-              document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Name error'
-              //alert("Name Eroor 1:Start with capital letter 2:No white spaces 3:No Special symbols")
-              event.preventDefault()
-            }
-            const offerPriceRegex =  /^[1-9][0-9]*$/; 
-    
-    
-    let description = document.getElementById('offerPrice').value;
-    if(offerPriceRegex.test(description)){
-        document.getElementById('offerPrice').style.borderColor = 'white'
-    }else{
-    document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> Offer Price  error'
-    document.getElementById('offerPrice').style.borderColor = 'red'
-    document.getElementById('offerPrice').style.borderWidth = '1px'
-    //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
-    event.preventDefault()
+        function setDefaultStartDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    let month = (today.getMonth() + 1).toString().padStart(2, '0'); // Add leading zero if needed
+    let day = today.getDate().toString().padStart(2, '0'); // Add leading zero if needed
+
+    // Set the default value of the "Start Date" input field to today's date
+    document.getElementById('startingDate').value = `${year}-${month}-${day}`;
+}
+
+function validate(event) {
+    const sDate = document.getElementById('startingDate').value;
+    const eDate = document.getElementById('expiringDate').value;
+    const sDateObj = new Date(sDate);
+    const eDateObj = new Date(eDate);
+    const todayDateObj = new Date();
+
+    document.getElementById('err-msg').innerHTML = ''; // Clear previous error messages
+
+    if (sDateObj > eDateObj) {
+        document.getElementById('err-msg').innerHTML += '<br> End date should be after the start date';
+        event.preventDefault();
+    }
+    if (sDateObj < todayDateObj) {
+        document.getElementById('err-msg').innerHTML += '<br> Starting date should be above today\'s date';
+        event.preventDefault();
     }
 
-    const ominimumRegex =  /^[1-9][0-9]*$/; 
-    
-    
-    let minimumPrice = document.getElementById('offerPrice').value;
-    if(offerPriceRegex.test(minimumPrice)){
-        document.getElementById('minimumPrice').style.borderColor = 'white'
-    }else{
-    document.getElementById('err-msg').innerHTML = document.getElementById('err-msg').innerHTML + '<br> minimumPrice error'
-    document.getElementById('minimumPrice').style.borderColor = 'red'
-    document.getElementById('minimumPrice').style.borderWidth = '1px'
-    //alert('Password Error 1:Minimum 8 charecters 2:use charecters and number 3:no white spaces')
-    event.preventDefault()
+    let name = document.getElementById('name').value;
+    const nameRegex = /^[A-Za-z0-9]{1,50}$/;
+
+    if (!nameRegex.test(name)) {
+        document.getElementById('name').style.borderColor = 'red';
+        document.getElementById('name').style.borderWidth = '1px';
+        document.getElementById('err-msg').innerHTML += '<br> Name error';
+        event.preventDefault();
     }
 
+    const offerPrice = parseInt(document.getElementById('offerPrice').value);
+    const minimumPrice = parseInt(document.getElementById('minimumPrice').value);
+
+    if (isNaN(offerPrice) || isNaN(minimumPrice) || offerPrice >= minimumPrice) {
+        document.getElementById('offerPrice').style.borderColor = 'red';
+        document.getElementById('minimumPrice').style.borderColor = 'red';
+        document.getElementById('err-msg').innerHTML += '<br> Offer Price must be greater than Minimum Price';
+        event.preventDefault();
+    }
 }
 
       </script>

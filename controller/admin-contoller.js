@@ -31,7 +31,6 @@ const adminIndex = (req, res) => {
 };
 
 const graph=async(req,res)=>{
-  console.log("enter");
   try {
     const start = moment().subtract(30, 'days').startOf('day');
     const end = moment().endOf('day');
@@ -253,16 +252,6 @@ const catCreation = async (req, res) => {
       }
     });
 }
-
-const deleteCategory = async (req, res) => {
-  var id = req.params.id;
-  try {
-    await categories.findOneAndDelete({ _id: id });
-    res.redirect("/admin/admin-category");
-  } catch (error) {
-    console.log(error);
-  }
-};
 
 const editCategoryPage = async (req, res) => {
   id = req.params.id;
@@ -730,7 +719,6 @@ module.exports = {
   orderDetails,
   delivered,
   adminCategory,
-  deleteCategory,
   catCreation,
   editCategoryPage,
   editCategory,

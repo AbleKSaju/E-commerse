@@ -58,6 +58,15 @@
                                       
                                       <a class="btn btn-primary muted" href="#">Delivered Success</a>
                                
+                                <%}else if(data[0].status==-1){%>
+                                    <style>
+                                        .btn.btn-danger.muted {
+                                          opacity: 0.5;
+                                        }
+                                      </style>
+                                      
+                                      <a class="btn btn-danger muted" href="#">Cancelled</a>
+                               
                                 <%}else{%>
                                     <select class="btn btn-secondary print ms-2"  onchange="location.href='/admin/changeStatus?id=<%=data[0]._id%>&status=' + this.value">
                                         <% if (locals.data[0].status==0) { %>
@@ -92,11 +101,6 @@
                                             <option value="1">Approve</option>
                                             <option value="2">Delivered</option>
                                           <% } %>
-                                        <!-- <option value="0">Pending</option>
-                                        <option value="-1">Cancel</option>
-                                        <option value="1">Approve</option>
-                                        <option value="4">Shipped</option>
-                                        <option value="2">Delivered</option> -->
                                     </select>
                             
                             <%}%>
@@ -176,22 +180,6 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!-- <%for(i=0;i<data[0].product.length;i++){%>
-                                            
-                                        <tr>
-                                            <td>
-                                                <a class="itemside" href="#">
-                                                    <div class="left">
-                                                        <img src="" width="40" height="40" class="img-xs" alt="">
-                                                    </div>
-                                                    <div class="info"> </div>
-                                                </a>
-                                            </td>
-                                            <td> <%=data[0].product[i].size%> </td>
-                                            <td> <%=data[0].product[i].quantity%> </td>
-                                            <td class="text-end"> $99.50 </td>
-                                        </tr>
-                                        <%}%> -->
                                         <%for(i=0;i<details.length;i++){%>
                                             <tr>
                                                 <td>
@@ -206,13 +194,16 @@
                                                 <td> <%=data[0].product[i].quantity%> </td>
                                                 <td class="text-end">₹ <%=details[i].ProductDetails[0].saleprice%> </td>
                                             </tr>
+                                            <%var price=details[i].ProductDetails[0].saleprice%>
+                                            <%var quantity=data[0].product[i].quantity%>
                                             <%}%>
                                             
                                             <td colspan="6" class="pt-4">
                                                 <article class="float-end">
                                                     <dl class="dlist">
                                                         <dt>Subtotal:</dt>
-                                                        <dd><%=details[0].totalPrice%></dd>
+                                                        <!-- <dd><%=details[0].totalPrice%></dd> -->
+                                                        <dd><%=price * quantity %> </dd>
                                                     </dl>
                                                     <br>
                                                     <dl class="dlist">
@@ -222,7 +213,7 @@
                                                     <br>
                                                     <dl class="dlist">
                                                         <dt>Grand total:</dt>
-                                                        <dd> <b class="h5">₹ <%=details[0].totalPrice%></b> </dd>
+                                                        <dd> <b class="h5">₹ <%=price * quantity %></b> </dd>
                                                     </dl>
                                                     <br>
                                                     <dl class="dlist">
@@ -252,18 +243,10 @@
                         </div> <!-- col// -->
                         <div class="col-lg-1"></div>
                         <div class="col-lg-4">
-                            <div class="box shadow-sm bg-light">
-                                <h6 class="mb-15">Payment info</h6>
-                                <p>
-                                    <img src="assets/imgs/card-brands/2.png" class="border" height="20"> Master Card **** **** 4768 <br>
-                                    Business name: Grand Market LLC <br>
-                                    Phone: +1 (800) 555-154-52
-                                </p>
-                            </div>
-                            <%if(data[0].reason){%>
+                            <%if(data[0].reason!=0){%>
                             <div class="h-25 pt-4">
                                 <div class="mb-3">
-                                    <b>Reason</b>
+                                    <b>Reason:</b>
                                     <h3><%=data[0].reason%></h3>
                                 </div>
                             </div>
@@ -274,6 +257,14 @@
             </div> <!-- card end// -->
         </section> <!-- content-main end// -->
     </main>
+    <style>
+        .col-lg-7 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 auto;
+    flex: -1 0 auto;
+    width: 101.33333%;
+}
+    </style>
     <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
     <script src="assets/js/vendors/select2.min.js"></script>
