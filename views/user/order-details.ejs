@@ -50,7 +50,9 @@
                         </div>
                         <div class="col-lg-6 col-md-6 ms-auto text-md-end">
                             <button class="btn btn-outline-primary" onclick="tracking()">Track Order</button>
+                            <% if(orders.status==2){%>
                         <a href="/invoice?id=<%=orders._id%>" class="btn btn-primary">invoice</a>
+                        <%}%>
                         </div>
                     </div>
                 </header>

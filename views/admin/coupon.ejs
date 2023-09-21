@@ -108,7 +108,6 @@
                                                   <span id="status_<%= coupon._id %>">Expired</span>
                                                 </td>
                                               <% } %>
-                                              
                                             <%})%>
                                         <%}%>
                                     </tbody>
@@ -224,15 +223,15 @@ function validate(event) {
     const sDateObj = new Date(sDate);
     const eDateObj = new Date(eDate);
     const todayDateObj = new Date();
-
-    document.getElementById('err-msg').innerHTML = ''; // Clear previous error messages
+todayDateObj.setHours(0, 0, 0, 0);
+    document.getElementById('err-msg').innerHTML = '';
 
     if (sDateObj > eDateObj) {
         document.getElementById('err-msg').innerHTML += '<br> End date should be after the start date';
         event.preventDefault();
     }
-    if (sDateObj < todayDateObj) {
-        document.getElementById('err-msg').innerHTML += '<br> Starting date should be above today\'s date';
+    if (sDateObj <= todayDateObj) {
+        document.getElementById('err-msg').innerHTML += '<br> Starting date should be greater than or equal to today\'s date'
         event.preventDefault();
     }
 

@@ -11,19 +11,16 @@ const cron = require('node-cron');
 cron.schedule('0 0 * * *', async () => {
     try {
       const currentDate = new Date();
-      // Find coupons with expiry dates in the past and status 1 (active).
       const expiredCoupons = await coupon.find({
         expiry: { $lt: currentDate },
         status: 1,
       });
   
       if (expiredCoupons.length > 0) {
-        // Update the status of expired coupons to 2 (expired).
         await coupon.updateMany(
           { _id: { $in: expiredCoupons.map((c) => c._id) } },
           { $set: { status: 2 } }
         );
-        console.log('Updated status of expired coupons.');
       }
     } catch (error) {
       console.error('Error updating coupon status:', error);
@@ -53,7 +50,6 @@ const couponAdded= async (req, res) => {
         postfix: "-2015"
     })
     let exist=await coupon.find({name:req.body.name},{new:true})
-    console.log(exist,"exist");
     if(exist.length){
         await coupon.find().lean()
         .then((data)=>{
@@ -77,13 +73,10 @@ const couponAdded= async (req, res) => {
 }
 
 const couponStatus=async (req,res)=>{
-    console.log(req.body);
     const id=req.body.id
     const status=req.body.status
-    console.log(status);
     await coupon.findByIdAndUpdate(id,{status:status},{new:true}).lean()
     .then((data)=>{
-        console.log(data);
         res.json(true)
     })
 }

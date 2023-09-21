@@ -46,11 +46,6 @@ const salesToday = async (req, res) => {
         },
       ])
       .sort({ createdOn: -1 });
-    // const productIds = orders.map((order) => order.product.productId);
-    // const products = await product.find({
-    //   _id: { $in: productIds },
-    // });
-    console.log(orders);
     const itemsperpage = 10;
     const currentpage = parseInt(req.query.page) || 1;
     const startindex = (currentpage - 1) * itemsperpage;
@@ -101,7 +96,6 @@ const salesWeekly = async (req, res) => {
       $sort: { createdOn: -1 },
     },
   ]);
-  console.log(orders,"odssss");
   const itemsperpage = 10;
   const currentpage = parseInt(req.query.page) || 1;
   const startindex = (currentpage - 1) * itemsperpage;

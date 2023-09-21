@@ -53,7 +53,6 @@ const graph=async(req,res)=>{
           walletCount: 0
         };
       }
-      console.log("ORder: ",order)
       monthlySales[monthName].revenue += order.totalPrice;
       monthlySales[monthName].productCount += order.product.length;
       monthlySales[monthName].orderCount++;
@@ -89,7 +88,6 @@ const graph=async(req,res)=>{
         monthlyData.walletCountData.push(monthlySales[monthName].walletCount);
       }
     }
-    console.log(monthlyData);
     return res.json(monthlyData);
   } catch (error) {
     console.error(error);
@@ -98,7 +96,6 @@ const graph=async(req,res)=>{
 }
 
 const monthlyreport=async(req,res)=>{
-  console.log("enter");
   try {
     const start = moment().subtract(30, 'days').startOf('day'); // Data for the last 30 days
     const end = moment().endOf('day');
@@ -107,7 +104,6 @@ const monthlyreport=async(req,res)=>{
       createdAt: { $gte: start, $lte: end },
       orderStatus: 'Delivered' 
     });
-    console.log( orderSuccessDetails,"sucesssssssss")
     const monthlySales = {}; 
 
     orderSuccessDetails.forEach(order => {
@@ -121,7 +117,6 @@ const monthlyreport=async(req,res)=>{
           razorpayCount: 0,
         };
       }
-      console.log("ORder: ",order)
       monthlySales[monthName].revenue += order.GrandTotal;
       monthlySales[monthName].productCount += order.items.length;
       monthlySales[monthName].orderCount++;
@@ -152,7 +147,6 @@ const monthlyreport=async(req,res)=>{
         monthlyData.razorpayCountData.push(monthlySales[monthName].razorpayCount);
       }
     }
-    console.log(monthlyData);
     return res.json(monthlyData);
   } catch (error) {
     console.error(error);
@@ -324,36 +318,9 @@ const listCategory =async (req, res) => {
       res.redirect("/admin/admin-category");
 }
 
-// const productDisplay = async (req, res) => {
-//   await categories.find({}).then((cat) => {
-//   if(req.query.search){
-//    const search=req.query.search
-//     product.find({
-//       $or:[
-//         { 
-//           name: { $regex: ".*" + search + ".*", $options: 'i' },
-//         },
-//         {
-//           saleprice: { $regex: ".*" + search + ".*", $options: 'i' },
-//         },
-//       ]
-//     }).lean()
-//     .then((data)=>{
-//       res.render("admin/products", { product: data, cat: cat });
-//     })
-//   }else{
-//     product.find({}).then((data) => {
-//       res.render("admin/products", { product: data, cat: cat });
-//     })
-//   }
-//   })
-// }
-
 const productDisplay = async (req, res) => {
   try {
     const allCategories = await categories.find({}).lean();
-    // const currentPage = parseInt(req.query.page) || 1;
-    // const itemsPerPage = 8;
     const search = req.query.search || '';
     const searchQuery = {
       $or: [
@@ -362,8 +329,6 @@ const productDisplay = async (req, res) => {
       ],
     };
     const totalProducts = await product.countDocuments(searchQuery);
-    // const totalPages = Math.ceil(totalProducts / itemsPerPage);
-
     const products = await product
 
       .find(searchQuery)
@@ -395,7 +360,6 @@ const addProductPage = async (req, res) => {
 };
 
 const addProduct = async (req, res) => {
-  console.log(req.body);
   var x = req.body.size;
   var create = await new product({
     name: req.body.name,
@@ -458,7 +422,6 @@ const editProductPage = async (req, res) => {
 };
 
 const editProduct = async (req, res) => {
-  console.log(req.body,"bodyyyy");
   var id = req.body.id;
   var size = req.body.size;
   if (req.files != 0) {
@@ -550,18 +513,6 @@ const listUser = async (req, res) => {
   });
 };
 
-
-// const orders = async (req, res) => {
-//   await order
-//     .find()
-//     .lean().sort({createdOn:-1})
-//     .then((data) => {
-//       res.render("admin/orders", { data: data });
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// };
 const orders = async (req, res) => {
   try {
     const currentPage = parseInt(req.query.page) || 1;
@@ -575,8 +526,6 @@ const orders = async (req, res) => {
     };
     const totalProducts = await order.countDocuments(searchQuery);
     const totalPages = Math.ceil(totalProducts / itemsPerPage);
-    console.log(totalProducts, "totalProducts");
-    console.log(totalPages);
 
     const data = await order
       .find(searchQuery)
@@ -630,9 +579,7 @@ const approved = async (req, res) => {
 }
 
 const orderDetails = async (req, res) => {
-  console.log(req.query,"qrty");
   var orderId = req.query.id;
-  console.log(orderId,"oid");
   var oid = new mongodb.ObjectId(orderId);
   var Details = await order.aggregate([
     { $match: { _id: oid } },
@@ -681,7 +628,6 @@ const delivered = async (req, res) => {
 };
 
 const orderStatus=async (req,res)=>{
-  console.log(req.query.status);
   if(req.query.status=="all"){
      res.redirect('/admin/admin-orders')
   }else{
@@ -691,10 +637,8 @@ const orderStatus=async (req,res)=>{
 }
 
 const changeStatus=async(req,res)=>{
-  console.log(req.query);
   await order.findByIdAndUpdate(req.query.id,{$set:{status:req.query.status}}).lean()
   .then((data)=>{
-    console.log(data);
     res.redirect(`/admin/details?id=${req.query.id}`)
   })
 }

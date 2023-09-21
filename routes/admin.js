@@ -5,18 +5,15 @@ const adminController = require("../controller/admin-contoller");
 const salesController = require("../controller/sales-controller")
 const bannerController = require("../controller/banner-controller")
 const couponController = require("../controller/coupon-controller")
-const bannerModel = require("../model/banner-model")
 const order = require("../model/order-model");
 const sharp = require("sharp");
 const multers = require("../multer/multers");
 const product = require("../model/products-model");
-const user = require("../model/user-model");
 const auth = require("../middlewares/auth");
 const coupon = require("../model/coupon-model")
 const { log } = require("debug/src/browser");
 const mongodb = require("mongodb");
 const moment = require("moment");
-const async = require("hbs/lib/async");
 const update = multers.update;
 const upload = multers.upload;
 const banner = multers.banner;
@@ -31,6 +28,7 @@ router.post("/admin-login", adminController.loginConfirm);
 router.get("/admin-dashboard",auth.adminLoggedIn, adminController.dashboard);
 
 router.get('/monthly-report',auth.adminLoggedIn,adminController.graph)
+
 
 //CATEGORY
 
@@ -78,12 +76,6 @@ router.get("/unblock/:id",auth.adminLoggedIn, adminController.unblockUser);
 //ORDER
 
 router.get("/admin-orders",auth.adminLoggedIn, adminController.orders);
-
-// router.post("/cancelOrder", adminController.cancelOrder);
-
-// router.post("/makeOrder", adminController.makeOrder);
-
-// router.post("/approved", adminController.approved);
 
 router.get("/details",auth.adminLoggedIn, adminController.orderDetails);
 

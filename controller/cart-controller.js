@@ -47,6 +47,7 @@ const getCart = async (req, res) => {
     data: cartProducts,
     total: totalPrice,
     userData,
+    unitErr:req.session.unitErr
   });
 };
 
@@ -117,36 +118,6 @@ const changeQuantity = async (req, res) => {
       });
   }
 };
-// totalPrice=parseInt(req.body.totalPrice);
-// console.log(totalPrice,"tp");
-// count = parseInt(req.body.count);
-// quantity = parseInt(req.body.quantity);
-// if (quantity == 1 && count == -1) {
-//   await user
-//     .updateOne(
-//       { _id: req.body.userId },
-//       { $pull: { cart: { productId: req.body.proId } } }
-//     )
-//     .then((data) => {
-//       res.json(true);
-//     })
-//     .catch((err) => {
-//       res.json(false);
-//     });
-// } else {
-//   user
-//     .updateOne(
-//       { _id: req.body.userId, "cart.productId": req.body.proId },
-//       { $inc: { "cart.$.quantity": count} },
-//       { new: true }
-//     )
-//     .then((data) => {
-//       res.json(true);
-//     })
-//     .catch((err) => {
-//       res.json(false);
-//     });
-// }
 
 const removeFromCart = async (req, res) => {
   await user
@@ -186,6 +157,11 @@ const buyNow = async (req, res) => {
   ]);
   let totalPrice = 0;
   for (let i = 0; i < productDetails.length; i++) {
+    if(productDetails[i].quantity>productDetails[i].ProductDetails[0].units){
+      req.session.unitErr=true
+      return res.redirect("/cart")
+    }
+    req.session.unitErr=false
     let qua = parseInt(productDetails[i].quantity);
     totalPrice =
       totalPrice +
@@ -193,17 +169,13 @@ const buyNow = async (req, res) => {
   }
   try {
     const userData = await user.findOne({ _id: userId });
-    /////////
-    console.log(totalPrice,"tp");
     const coupons = await coupon
     .find({
       status: "1",
     })
     .lean();
-    console.log(coupons,"cs");
     const sessionUser = req.session.user;
     if (coupons.length === 0) {
-      console.log("No coupons found for session user");
       res.render("user/buy-now", {
         userData,
         method: false,
@@ -219,7 +191,6 @@ const buyNow = async (req, res) => {
         parseInt(totalPrice) > parseInt(couponData.minimumPrice)
       );
       if (filteredCoupons.length === 0) {
-        console.log("No coupons found for session user");
         res.render("user/buy-now", {
           userData,
           method: false,
@@ -242,61 +213,10 @@ const buyNow = async (req, res) => {
       }
     }
 
-    /////////̀
   } catch (error) {
     console.error(error);
   }
-
-  // let coupons=await coupon.find({}).lean()
-  // .then((data)=>{
-  //   console.log(data);
-  //   if(data.user==req.session.user){
-  //     console.log("yes");
-  //   }else{
-  //     console.log("no");
-  //   }
-
-  // })
-  // res.render('user/buy-now',{userData,method:false,quantity:null,coupons,status:productDetails,total:totalPrice,isLoggedIn:req.session.user})
 };
-//   console.log(req.body);
-//   var userId = req.session.user;
-//   var oid = new mongodb.ObjectId(userId);
-//   var products = await user.aggregate([
-//     {
-//       $match: { _id: oid },
-//     },
-//     { $unwind: "$cart" },
-//     {
-//       $project: {
-//         proId: { $toObjectId: "$cart.productId" },
-//         quantity: "$cart.quantity",
-//         size: "$cart.size",
-//         totalPrice:  "$cart.totalPrice"
-//       },
-//     },
-//     {
-//       $lookup: {
-//         from: "products",
-//         localField: "proId",
-//         foreignField: "_id",
-//         as: "ProductDetails",
-//       },
-//     },
-//   ]);
-//   console.log(products);
-//   await user.findOne({ _id: userId }).then((data) => {
-//     totalPrice = req.body.total;
-//     res.render("user/buy-now", {
-//       method:false,
-//       userData: data,
-//       status: products,
-//       total: totalPrice,
-//       quantity:null,
-//       isLoggedIn: req.session.user,
-//     });
-//   });
-// };
 
 const buy = async (req, res) => {
   const userId = req.session.user;
@@ -320,7 +240,6 @@ const buy = async (req, res) => {
     const coupons = await coupon.find({ status: "1" }).lean();
     const sessionUser = req.session.user;
     if (coupons.length === 0) {
-      console.log("No coupons found for session user");
       res.render("user/buy-now", {
         userData,
         method: true,
@@ -337,7 +256,6 @@ const buy = async (req, res) => {
       );
 
       if (filteredCoupons.length === 0) {
-        console.log("No coupons found for session user");
         res.render("user/buy-now", {
           userData,
           method: true,
@@ -368,24 +286,18 @@ const buy = async (req, res) => {
 };
 
 const verify = (req, res) => {
-  console.log(req.body);
   const crypto = require("crypto");
   let hmac = crypto.createHmac("sha256", "FawYUz1dMjHVYWrf9ZEUjOXi");
-  console.log(req.body["payment[razorpay_payment_id]"], "gggggggggggggg ");
   hmac.update(
     req.body["payment[razorpay_order_id]"] +
       "|" +
       req.body["payment[razorpay_payment_id]"]
   );
   hmac = hmac.digest("hex");
-  console.log(hmac);
-  console.log(req.body["payment[razorpay_signature]"]);
 
   if (hmac == req.body["payment[razorpay_signature]"]) {
-    console.log("entrd");
     res.json({ status: true });
   } else {
-    console.log("elsee");
     res.json({ status: false });
   }
 };

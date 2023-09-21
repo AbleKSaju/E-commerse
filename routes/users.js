@@ -11,15 +11,11 @@ const orderModel=require('../model/order-model')
 const invoice=require("../middlewares/invoice")
 const productController=require("../controller/product-controller")
 const banner=require("../model/banner-model")
-// const loggedIn = require("../middlewares/loggedin");
 const auth = require("../middlewares/auth");
 const userController = require("../controller/user-controller");
-const easyinvoice = require('easyinvoice');
-const { Readable } = require("stream");
 const Razorpay=require("razorpay");
 const { log } = require("debug/src/node");
 const { request } = require("https");
-var instance = new Razorpay({ key_id:process.env.RAZORPAY_KEY_ID, key_secret:process.env.RAZORPAY_KEY_SECRET})
 
 
 router.get("/", userController.index);
@@ -53,6 +49,8 @@ router.get("/show-products", productController.productShow);
 router.get("/search",productController.searchProduct)
 
 router.get('/brand/:id',productController.bradWise)
+
+router.get('/priceFilter/:price',productController.priceWise)
 
 router.get('/subCategory/:cat',productController.subCategory)
 

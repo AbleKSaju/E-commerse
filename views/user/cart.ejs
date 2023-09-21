@@ -77,11 +77,14 @@
                                     </button> -->
                                     </div>
                                     <div class="mt-4">
-                                        <p>Size:<%=data[i].size%></p>
+                                        <p>Size:<%=data[i].size%> &nbsp; &nbsp; &nbsp; &nbsp;
+                                            <%if(unitErr==true){%>
+                                                <p>only <span class="text-danger fs-5"><%=data[i].ProductDetails[0].units%> </span> units left</p>
+                                            <%}%>
+                                        </p>
+                                       
                                     </div>
                                 </div>
-
-
                             <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
                                 <div class="">₹
                                     <text id="<%=data[i].ProductDetails[0]._id%>pro-total" class="h6">
@@ -107,13 +110,9 @@
                     <%}%>
                     </div>
 
-                    <div class="border-top pt-4 mx-4 mb-4">
+                    <div class="pt-4 mx-4 mb-4">
                         <p><i class="fas fa-truck text-muted fa-lg"></i> Free Delivery within 1-2 weeks</p>
                         <p class="text-muted">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt
-                            ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                            laboris nisi ut
-                            aliquip
                         </p>
                     </div>
                 </div>
@@ -139,6 +138,7 @@
                         </div>
                         <div class="mt-3">
                             <form action="/buy-now" method="get">
+                     
                                 <%if(total==0){%>
                                 <button type="submit" class="btn btn-success w-100 shadow-0 mb-2" disabled> Make purchase</button> 
                                 <%}else{%>
@@ -185,6 +185,7 @@
                       <% const words = products[i].description.split(' '); %>
                       <% const truncatedDescription = words.slice(0, 7).join(' '); %>
                       <%= truncatedDescription %>...
+                      
                     </div>
                   </div>
                 </div>
@@ -229,8 +230,6 @@
            let GrandTotal = document.getElementById('grand-total').innerHTML
            document.getElementById('grand-total').innerHTML = parseInt(GrandTotal) - parseInt(price);
        }
-          
-           
            $.ajax({
                url:"/change-quantity",
                method:'post',
@@ -255,6 +254,7 @@
      
        }
        function addtoCart(proId){
+
                                            var quantity=1
                                            var size='small'
                                            $.ajax({

@@ -44,7 +44,6 @@ const bannerAdded=(req,res)=>{
 }
 
 const editBanner=async (req,res)=>{
-    console.log(req.params.id)
     var category=await categories.find().lean()
     var data=await bannerModel.findOne({_id:req.params.id}).lean()
         res.render('admin/edit-banner',{data,category})
@@ -52,7 +51,6 @@ const editBanner=async (req,res)=>{
 }
 
 const bannerEdited=(req, res, next) => {
-    console.log("entr");
     const currentDate = new Date();
     const [year, month, day] = [
         currentDate.getFullYear(),
@@ -82,7 +80,6 @@ const bannerEdited=(req, res, next) => {
 }
 
 const deleteBanner=async(req,res)=>{
-    console.log(req.params.id);
     await bannerModel.findByIdAndRemove(req.params.id)
     .then((data)=>{
         res.redirect('/admin/bannerManagement')

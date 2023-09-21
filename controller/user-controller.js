@@ -492,14 +492,14 @@ const makePurchase = async (req, res) => {
 const applyCoupon = async (req, res) => {
   try {
     var offerPrice;
-    const offer = await coupon.findOne({ code: req.body.name }).lean();
+    const offer = await coupon.findOne({ code: req.body.coupon }).lean();
     if (!offer) {
       return res.status(404).json({ message: "Coupon not found" });
     }
     offerPrice = parseInt(offer.offerPrice);
     console.log(req.body, "coupons");
     await coupon.findOneAndUpdate(
-      { name: req.body.coupon },
+      { code: req.body.coupon },
       { $push: { user: req.session.user } }
     );
     res.json({ offerPrice: offerPrice });

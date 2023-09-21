@@ -100,7 +100,7 @@
                                     <td>
                                       <!-- <button onclick="showDetails('<%=data.name%>','<%=data.mobile%>','<%=order[i].address[0].altNumber%>','<%=order[i].address[0].pinCode%>','<%=order[i].address[0].house%>','<%=order[i].address[0].area%>','<%=order[i].address[0].landmark%>','<%=order[i].address[0].town%>','<%=order[i].address[0].state%>','<%=order[i].totalPrice%>','<%=order[i].status%>','<%=order[i].payment%>','<%=order[i].date%>')" class="btn btn-success">Details</button> -->
                                      <a href="/orderDetailsPage?id=<%=order[i]._id%>"><button class="btn btn-success">Details</button></a> 
-                                        <%if(order[i].status==0 || order[i].status==1){%>
+                                        <%if(order[i].status==0 || order[i].status==1 || order[i].status==4){%>
                                         <button onclick="cancel('<%=order[i]._id%>','<%=order[i].payment%>','<%=order[i].totalPrice%>')" class="btn btn-outline-danger">Cancel</button>
                                         <%}else if(order[i].status==-1){%>
                                             <button  class="btn btn-danger" disabled>cancelled</button>
@@ -112,7 +112,6 @@
                                     </td>
                                     <!-- <td>
                                         <a class="btn btn-secondary print ms-2" href="/invoice?id=<%=order[i]._id%>"><i class="icon material-icons md-print"></i></a>
-
                                     </td> -->
                                 </tr>
 
