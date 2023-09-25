@@ -536,7 +536,7 @@ function applyCoupon(total,wallet){
               success:(response)=>{
               document.getElementById('coupon').readOnly = true;
               document.getElementById('availableCoupon').style.display = 'none';
-              document.getElementById('applyButton').disabled  =true;
+              document.getElementById('applyButton').disabled =true;
               const gt = parseInt(document.getElementById('gt').innerHTML);
               const discount=parseInt(document.getElementById('discount').innerHTML)
               document.getElementById('gt').innerText = gt-response.offerPrice

@@ -194,11 +194,11 @@ const adminCategory = async (req, res) => {
     .lean()
     .then((categories) => {
       categories.reverse()
-      const itemsperpage = 4;
+      const itemsperpage = 6;
       const currentpage = parseInt(req.query.page) || 1;
       const startindex = (currentpage - 1) * itemsperpage;
       const endindex = startindex + itemsperpage;
-      const totalpages = Math.ceil(categories.length / 4);
+      const totalpages = Math.ceil(categories.length / 6);
       const currentproduct = categories.slice(startindex,endindex);
       res.render("admin/category", {
         categories: currentproduct,
@@ -237,8 +237,17 @@ const catCreation = async (req, res) => {
         .find()
         .lean()
         .then((categories) => {
+          categories.reverse()
+          const itemsperpage = 6;
+          const currentpage = parseInt(req.query.page) || 1;
+          const startindex = (currentpage - 1) * itemsperpage;
+          const endindex = startindex + itemsperpage;
+          const totalpages = Math.ceil(categories.length / 6);
+          const currentproduct = categories.slice(startindex,endindex);
           res.render("admin/category", {
-            categories: categories,
+            categories: currentproduct,
+            totalpages,
+            currentpage,
             Already:"Category Already Exist"
 
           })
@@ -541,6 +550,65 @@ const orders = async (req, res) => {
   }
 };
 
+const invoice= async(req,res)=>{
+  try {
+      const doc = new PDFDocument();
+      const filename = 'sales-report.pdf';
+      const orders = req.body;
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+      doc.pipe(res);
+      doc.fontSize(12);
+      doc.text('Sales Report', { align: 'center', fontSize: 16 });
+      const margin = 5;
+      doc
+        .moveTo(margin, margin) // Top-left corner (x, y)
+        .lineTo(600 - margin, margin) // Top-right corner (x, y)
+        .lineTo(600 - margin, 842 - margin) // Bottom-right corner (x, y)
+        .lineTo(margin, 842 - margin) // Bottom-left corner (x, y)
+        .lineTo(margin, margin) // Back to top-left to close the rectangle
+        .lineTo(600 - margin, margin) // Draw line across the bottom edge
+        .lineWidth(3)
+        .strokeColor('#000000')
+        .stroke();
+      
+      doc.moveDown();
+      
+      // Define table headers with 4 columns
+      const headers = ['Order ID', 'Name', 'Date', 'Total']; // Add the new column header
+      
+      // Calculate position for headers
+      let headerX = 20;
+      const headerY = doc.y + 10;
+      
+      // Adjust the spacing for the "Order ID" column to give it more space
+      doc.text(headers[0], headerX, headerY); // Adjusted position for "Order ID" header
+      headerX += 200; // Adjust spacing for the remaining headers
+      
+      // Draw headers for the other columns
+      headers.slice(1).forEach(header => {
+        doc.text(header, headerX, headerY);
+        headerX += 130; // Adjust spacing as needed for the remaining headers
+      });
+      
+      // Calculate position for data
+      let dataY = headerY + 25;
+      
+      // Loop through your data and add rows to the table with the new column values
+      orders.forEach(order => {
+        doc.text(order.orderId, 20, dataY); // Adjusted position for "Order ID" data
+        doc.text(order.name, 210, dataY);
+        doc.text(order.date, 350, dataY);
+        doc.text(order.totalAmount, 480, dataY);
+        dataY += 30; // Adjust vertical spacing as needed
+
+      });
+      
+      doc.end();
+  } catch (error) {
+      console.log(error.message);
+  }
+}
 
 const cancelOrder = async (req, res) => {
   await order
@@ -657,6 +725,7 @@ module.exports = {
   loginConfirm,
   dashboard,
   orders,
+  invoice,
   cancelOrder,
   makeOrder,
   approved,

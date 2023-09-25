@@ -26,6 +26,7 @@
     "node-cron": "^3.0.2",
     "nodemailer": "^6.9.4",
     "nodemon": "^3.0.1",
+    "pdfkit": "^0.13.0",
     "razorpay": "^2.9.2",
     "serve-favicon": "^2.5.0",
     "session": "^0.1.0",

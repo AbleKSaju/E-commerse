@@ -14,6 +14,7 @@ const coupon = require("../model/coupon-model")
 const { log } = require("debug/src/browser");
 const mongodb = require("mongodb");
 const moment = require("moment");
+const PDFDocument=require('pdfkit')
 const update = multers.update;
 const upload = multers.upload;
 const banner = multers.banner;
@@ -77,13 +78,16 @@ router.get("/unblock/:id",auth.adminLoggedIn, adminController.unblockUser);
 
 router.get("/admin-orders",auth.adminLoggedIn, adminController.orders);
 
-router.get("/details",auth.adminLoggedIn, adminController.orderDetails);
+router.post('/generate-pdf',auth.isLogged, adminController.invoice)
 
-router.post("/delivered",auth.adminLoggedIn, adminController.delivered);
+router.get("/details",auth.adminLoggedIn, adminController.orderDetails)
+
+router.post("/delivered",auth.adminLoggedIn, adminController.delivered)
 
 router.get('/orderStatus',auth.adminLoggedIn,adminController.orderStatus)
 
 router.get('/changeStatus',auth.adminLoggedIn,adminController.changeStatus)
+
 
 // SALES
 

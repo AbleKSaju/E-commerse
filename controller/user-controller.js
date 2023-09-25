@@ -101,7 +101,7 @@ const signup = (req, res) => {
     req.session.refralUser = req.query.id;
   }
 
-  res.render("user/signup", { exist: req.session.user });
+  res.render("user/signup", { exist: req.session.userExist });
   req.session.userExist = false;
 };
 
@@ -875,7 +875,7 @@ const history = async (req, res) => {
   const startindex = (currentpage - 1) * itemsperpage;
   const endindex = startindex + itemsperpage;
   const totalpages = Math.ceil(formattedHistory.length / 15);
-  const currentHistory = formattedHistory.slice(startindex, endindex);
+  var currentHistory = formattedHistory.slice(startindex, endindex);
   res.render("user/show-history", {
     isLoggedIn: req.session.user,
     history: currentHistory,
