@@ -2,7 +2,7 @@ const mongoose=require('mongoose')
 
 module.exports={
     connect(){
-        mongoose.connect('mongodb://0.0.0.0:27017/sampl',{
+        mongoose.connect(process.env.mongoDB_URL,{
             useNewUrlParser:true,useUnifiedTopology:true
         }).then((data)=>{
             console.log("Database Connected");
