@@ -78,7 +78,7 @@ router.get("/unblock/:id",auth.adminLoggedIn, adminController.unblockUser);
 
 router.get("/admin-orders",auth.adminLoggedIn, adminController.orders);
 
-router.post('/generate-pdf',auth.isLogged, adminController.invoice)
+router.post('/generate-pdf',auth.adminLoggedIn, adminController.invoice)
 
 router.get("/details",auth.adminLoggedIn, adminController.orderDetails)
 

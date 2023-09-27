@@ -134,8 +134,6 @@
     <script>
         document.getElementById('createSalesReport').addEventListener('click', async (event) => {
             event.preventDefault();
-            alert("enter")
-
             // Get a reference to the table
             const salesTable = document.getElementById('salesTable');
 
@@ -150,7 +148,7 @@
                 const date = row.cells[4].textContent;
                 let totalAmount = row.cells[7].textContent.trim();
                 totalAmount = parseFloat(totalAmount.replace(/[^0-9]/g, ''), 10);
-                // Do something with these values, for example, log them                
+     // Do something with these values, for example, log them                
                 const orderData = {
                     orderId: orderId,
                     name:name,
