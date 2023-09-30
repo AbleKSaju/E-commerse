@@ -2,7 +2,7 @@ const { log } = require("debug/src/node");
 const order = require("../model/order-model");
 const product = require("../model/products-model");
 
-const salesReport = (req, res) => {
+const  salesReport = (req, res) => {
   console.log(req.query.day);
   if (req.query.day) {
     res.redirect(`/admin/${req.query.day}`);

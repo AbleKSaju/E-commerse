@@ -284,7 +284,7 @@ const editCategory = async (req, res) => {
       })
       .lean();
 
-    if (!existingCategory || existingCategory.name==req.body.name) {
+    if (!existingCategory || existingCategory.name==req.body.name && existingCategory.name.length==2) {
       const updateData = {
         name: req.body.name,
         description: req.body.description,
