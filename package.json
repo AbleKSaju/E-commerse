@@ -6,7 +6,7 @@
     "start": "nodemon ./bin/www"
   },
   "dependencies": {
-    "bcrypt": "^5.1.0",
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "busboy-body-parser": "^0.3.2",
     "cookie-parser": "~1.4.3",
@@ -27,6 +27,7 @@
     "nodemailer": "^6.9.4",
     "nodemon": "^3.0.1",
     "pdfkit": "^0.13.0",
+    "punycode": "^2.3.1",
     "razorpay": "^2.9.2",
     "serve-favicon": "^2.5.0",
     "session": "^0.1.0",

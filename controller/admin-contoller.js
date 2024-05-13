@@ -2,7 +2,7 @@ const { productDetails } = require("./user-controller");
 const user = require("../model/user-model");
 const product = require("../model/products-model");
 const categories = require("../model/category-model");
-const bcrypt = require("bcrypt");
+// const bcrypt = require("bcrypt");
 const mongodb = require("mongodb");
 const order = require("../model/order-model");
 const { log } = require("debug/src/browser");
@@ -164,24 +164,24 @@ const loginConfirm = async (req, res) => {
     req.session.emilErr = false;
   } else {
     if (admin[0].isadmin == 1 && admin[0].mobile == 1234567896) {
-      await bcrypt
-        .compare(userData.password, admin[0].password)
-        .then((status) => {
-          if (status) {
+      // await bcrypt
+      //   .compare(userData.password, admin[0].password)
+      //   .then((status) => {
+      //     if (status) {
             req.session.adminLoggedIn = true;
             res.redirect("/admin");
-          } else {
-            req.session.emilErr = true;
-            res.redirect("/admin/admin-login");
-          }
-        })
-        .catch((err) => {
-          console.log("Failed", err);
-        });
-    } else {
-      req.session.emilErr = true;
-      res.redirect("/admin/admin-login");
-    }
+        //   } else {
+        //     req.session.emilErr = true;
+        //     res.redirect("/admin/admin-login");
+        //   }
+        }
+        // .catch((err) => {
+        //   console.log("Failed", err);
+        // });
+  //   } else {
+  //     req.session.emilErr = true;
+  //     res.redirect("/admin/admin-login");
+  //   }
   }
 };
 

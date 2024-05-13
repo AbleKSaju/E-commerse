@@ -286,6 +286,7 @@ const buy = async (req, res) => {
 };
 
 const verify = (req, res) => {
+  console.log(req.body,"Bodyu");
   const crypto = require("crypto");
   let hmac = crypto.createHmac("sha256", "FawYUz1dMjHVYWrf9ZEUjOXi");
   hmac.update(
@@ -294,10 +295,13 @@ const verify = (req, res) => {
       req.body["payment[razorpay_payment_id]"]
   );
   hmac = hmac.digest("hex");
+  console.log(hmac,"HMACC");
 
   if (hmac == req.body["payment[razorpay_signature]"]) {
+    console.log("True");
     res.json({ status: true });
   } else {
+    console.log("FAle");
     res.json({ status: false });
   }
 };

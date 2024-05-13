@@ -69,11 +69,13 @@ const login = (req, res) => {
 
 const verifyLoggin = async (req, res) => {
   try {
+    console.log(req.body,"req.body");
     const userData = req.body;
     const userExist = await user.findOne({
       email: userData.email,
-      verified: 0,
+      // verified: 0,
     });
+    console.log(userExist,"userExist");
     if (!userExist) {
       return res.render("user/login", {
         email: "Email Error",
@@ -83,7 +85,9 @@ const verifyLoggin = async (req, res) => {
       userData.password,
       userExist.password
     );
+    console.log(passwordMatches,"passwordMatchespasswordMatches");
     if (!passwordMatches) {
+      console.log("NOO");
       return res.render("user/login", {
         pass: "Password Error",
       });
@@ -106,6 +110,8 @@ const signup = (req, res) => {
 };
 
 const verigySignup = async (req, res) => {
+  console.log(process.env.EMAIL);
+  console.log(process.env.PASSWORD);
   try {
     const userExist = await user.find({ email: req.body.email });
     const userData = req.body;

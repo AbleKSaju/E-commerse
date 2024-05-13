@@ -4,7 +4,6 @@ const users = require("../model/user-model");
 const product=require("../model/products-model")
 const coupon=require("../model/coupon-model")
 const mongodb=require('mongodb')
-const bcrypt=require('bcrypt')
 const cart=require('../controller/cart-controller')
 const categories=require('../model/category-model')
 const orderModel=require('../model/order-model')

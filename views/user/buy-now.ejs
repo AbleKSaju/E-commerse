@@ -662,6 +662,7 @@ function makePurchase(total, user, status) {
                   }
               });
           }else if(response.status == 'razorpay'){
+            console.log(response,"res");
                var options = {
                        "key": "rzp_test_sPwoxcRC0hnSFO", // Enter the Key ID generated from the Dashboard
                        "amount": response.order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
@@ -671,6 +672,7 @@ function makePurchase(total, user, status) {
                        "image": "https://example.com/your_logo",
                        "order_id": response.order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
                        "handler": function (status){
+                        console.log(status,"status");
                            verifyPayment(response.order,status,response.id)
                        },
                        "prefill": { //We recommend using the prefill parameter to auto-fill customer's contact information, especially their phone number
@@ -709,6 +711,9 @@ function makePurchase(total, user, status) {
   })
 }
 function verifyPayment(order,payment,id){
+  console.log(order,"Order");
+  console.log(payment,"Payment");
+  console.log(id,"ID");
 let user=document.getElementById('userId').value
       $.ajax({
           url:'/verifyPayment',
